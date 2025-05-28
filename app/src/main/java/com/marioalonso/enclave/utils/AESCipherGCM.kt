@@ -24,112 +24,103 @@ object AESCipherGCM {
         }
     }
 
-    fun deriveKey(password: String, salt: ByteArray): SecretKey {
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val spec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_SIZE)
-        val secret = factory.generateSecret(spec)
-        return SecretKeySpec(secret.encoded, "AES")
+    fun deriveKey(password: CharArray, salt: ByteArray): SecretKey {
+        try {
+            val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+            val spec = PBEKeySpec(password, salt, ITERATIONS, KEY_SIZE)
+            val secret = factory.generateSecret(spec)
+            return SecretKeySpec(secret.encoded, "AES")
+        } finally {
+            // Clear the password from memory
+            password.fill('\u0000')
+        }
     }
 
-    fun hashPassword(password: String, salt: ByteArray): String {
-        val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
-        val spec = PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_SIZE)
-        val hash = factory.generateSecret(spec).encoded
-        return Base64.getEncoder().encodeToString(salt + hash) // Combine salt + hash
-    }
+//    fun encrypt(plaintext: String, masterKey: SecretKey, debug: Boolean = false): String {
+//        val salt = AESCipherGCM.generateSalt()
+//        var mutableMasterKey = masterKey
+//
+//        // Convertir el ByteArray de masterKey.encoded a CharArray
+//        val masterKeyChars = mutableMasterKey.encoded.toString(Charsets.UTF_8).toCharArray()
+//
+//        // Derivar una nueva clave a partir de la masterKey y el salt
+//        val derivedKey = AESCipherGCM.deriveKey(masterKeyChars, salt)
+//
+//        // Generar un IV único
+//        val iv = ByteArray(AESCipherGCM.IV_SIZE).apply {
+//            SecureRandom().nextBytes(this)
+//        }
+//
+//        // Cifrar el texto
+//        val cipher = Cipher.getInstance(AESCipherGCM.TRANSFORMATION)
+//        cipher.init(Cipher.ENCRYPT_MODE, derivedKey, GCMParameterSpec(AESCipherGCM.TAG_SIZE, iv))
+//        val encrypted = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
+//
+//        // Combinar salt + IV + texto cifrado y codificar en Base64
+//        val combined = salt + iv + encrypted
+//        return Base64.getEncoder().encodeToString(combined)
+//    }
+//
+//    fun decrypt(ciphertextBase64: String, masterKey: SecretKey, debug: Boolean = false): String {
+//        // Decodificar el texto cifrado
+//        val combined = Base64.getDecoder().decode(ciphertextBase64)
+//        var mutableMasterKey = masterKey
+//
+//        // Extraer el salt, IV y texto cifrado
+//        val salt = combined.copyOfRange(0, AESCipherGCM.SALT_SIZE)
+//        val iv = combined.copyOfRange(AESCipherGCM.SALT_SIZE, AESCipherGCM.SALT_SIZE + AESCipherGCM.IV_SIZE)
+//        val encrypted = combined.copyOfRange(AESCipherGCM.SALT_SIZE + AESCipherGCM.IV_SIZE, combined.size)
+//
+//        // Convertir el ByteArray de masterKey.encoded a CharArray
+//        val masterKeyChars = mutableMasterKey.encoded.toString(Charsets.UTF_8).toCharArray()
+//
+//        // Derivar la clave usando la masterKey y el salt
+//        val derivedKey = AESCipherGCM.deriveKey(masterKeyChars, salt)
+//
+//        // Descifrar el texto
+//        val cipher = Cipher.getInstance(AESCipherGCM.TRANSFORMATION)
+//        cipher.init(Cipher.DECRYPT_MODE, derivedKey, GCMParameterSpec(AESCipherGCM.TAG_SIZE, iv))
+//        val decrypted = cipher.doFinal(encrypted)
+//        return String(decrypted, Charsets.UTF_8)
+//    }
 
-    fun verifyPassword(inputPassword: String, storedHash: String): Boolean {
-        val decoded = Base64.getDecoder().decode(storedHash)
-        val salt = decoded.copyOfRange(0, SALT_SIZE)
-        val storedHashBytes = decoded.copyOfRange(SALT_SIZE, decoded.size)
+    fun encrypt(plaintext: String, masterKey: SecretKey, useSalt: Boolean = false): String {
+        val salt = if (useSalt) generateSalt() else ByteArray(0)
+        val key = if (useSalt) {
+            val masterKeyChars = masterKey.encoded.toString(Charsets.UTF_8).toCharArray()
+            deriveKey(masterKeyChars, salt)
+        } else {
+            masterKey
+        }
 
-        val inputHash = hashPassword(inputPassword, salt)
-        val inputHashBytes = Base64.getDecoder().decode(inputHash).copyOfRange(SALT_SIZE, decoded.size)
-
-        return storedHashBytes.contentEquals(inputHashBytes)
-    }
-
-    fun encrypt(plaintext: String, password: String): String {
-        val salt = generateSalt()
-        val key = deriveKey(password, salt)
-
-        val cipher = Cipher.getInstance(TRANSFORMATION)
         val iv = ByteArray(IV_SIZE).apply {
             SecureRandom().nextBytes(this)
         }
+
+        val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(TAG_SIZE, iv))
         val encrypted = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
 
-        // Combinar salt + IV + texto cifrado y codificar en Base64
         val combined = salt + iv + encrypted
         return Base64.getEncoder().encodeToString(combined)
     }
 
-    fun decrypt(ciphertextBase64: String, password: String): String {
+    fun decrypt(ciphertextBase64: String, masterKey: SecretKey, useSalt: Boolean = false): String {
         val combined = Base64.getDecoder().decode(ciphertextBase64)
-        val salt = combined.copyOfRange(0, SALT_SIZE)
-        val iv = combined.copyOfRange(SALT_SIZE, SALT_SIZE + IV_SIZE)
-        val encrypted = combined.copyOfRange(SALT_SIZE + IV_SIZE, combined.size)
+        val salt = if (useSalt) combined.copyOfRange(0, SALT_SIZE) else ByteArray(0)
+        val iv = combined.copyOfRange(if (useSalt) SALT_SIZE else 0, (if (useSalt) SALT_SIZE else 0) + IV_SIZE)
+        val encrypted = combined.copyOfRange((if (useSalt) SALT_SIZE else 0) + IV_SIZE, combined.size)
 
-        val key = deriveKey(password, salt)
+        val key = if (useSalt) {
+            val masterKeyChars = masterKey.encoded.toString(Charsets.UTF_8).toCharArray()
+            deriveKey(masterKeyChars, salt)
+        } else {
+            masterKey
+        }
 
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(TAG_SIZE, iv))
         val decrypted = cipher.doFinal(encrypted)
         return String(decrypted, Charsets.UTF_8)
-    }
-}
-
-fun main3() {
-    val masterPassword = "miClaveMaestra123"
-    val plaintext = "Este es un mensaje secreto"
-
-    // Cifrar
-    val encrypted = AESCipherGCM.encrypt(plaintext, masterPassword)
-    println("Encrypted: $encrypted")
-
-    // Descifrar
-    val decrypted = AESCipherGCM.decrypt(encrypted, masterPassword)
-    println("Decrypted: $decrypted")
-}
-
-fun main() {
-    while (true) {
-        println("\nChoose an option:")
-        println("1. Encrypt")
-        println("2. Decrypt")
-        println("3. Exit")
-        print("Option: ")
-
-        when (readln().toIntOrNull()) {
-            1 -> {
-                print("Enter the password for encryption: ")
-                val password = readln()
-                val salt = AESCipherGCM.generateSalt()
-                val key = AESCipherGCM.deriveKey(password, salt)
-
-                print("Enter the text to encrypt: ")
-                val plaintext = readln()
-                val result = AESCipherGCM.encrypt(plaintext, password)
-
-                println("Encrypted text (store this): $result")
-            }
-
-            2 -> {
-                print("Enter the password for decryption: ")
-                val password = readln()
-
-                print("Enter the encrypted text (including salt): ")
-                val encryptedInput = readln()
-                println("Decrypted text: ${AESCipherGCM.decrypt(encryptedInput, password)}")
-            }
-
-            3 -> {
-                println("Exiting the application. Goodbye!")
-                break
-            }
-
-            else -> println("Invalid option. Please try again.")
-        }
     }
 }

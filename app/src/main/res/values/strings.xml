@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name" translatable="false">Enclave</string>
+    <string name="prueba" translatable="true">Hello</string>
 </resources>
