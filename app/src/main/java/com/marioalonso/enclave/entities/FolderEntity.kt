@@ -1,13 +1,12 @@
-package com.marioalonso.enclave.classes
+package com.marioalonso.enclave.entities
 
-import java.util.UUID
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "folders")
-open class Folder(
+data class FolderEntity(
     @PrimaryKey
     val folderId: String = UUID.randomUUID().toString(),
-    val name: String,
-) {
-}
+    val name: String
+)

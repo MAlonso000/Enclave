@@ -16,10 +16,10 @@ import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.items.SecretItem
 import com.marioalonso.enclave.lists.SecretList
 import com.marioalonso.enclave.ui.theme.EnclaveTheme
+import com.marioalonso.enclave.viewmodel.SecretViewModel
 
-@Preview(showBackground = true)
 @Composable
-fun Screen() {
+fun Screen(viewModel: SecretViewModel,) {
     val context = LocalContext.current
     val fodler = Folder(
         name = "Mis secretos",
@@ -44,7 +44,7 @@ fun Screen() {
         username = "mario000",
         encryptedPassword = "Dc/MYeD8tndtxNw6msww1rfrHlMU3SucU+tKksUxPlvso+jvz3lll3BLPhisU87RStXpI7x0"
     )
-    SecretList(secrets = secrets, onItemClick = {  secret: Secret ->
+    SecretList(viewModel = viewModel, secrets = secrets, onItemClick = {  secret: Secret ->
         Toast.makeText(
             context,
             "prueba",

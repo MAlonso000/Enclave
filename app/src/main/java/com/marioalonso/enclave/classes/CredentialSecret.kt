@@ -4,7 +4,6 @@ import com.marioalonso.enclave.utils.AESCipherGCM
 import java.util.*
 import javax.crypto.SecretKey
 
-// Concrete implementations
 class CredentialSecret(
     id: String = UUID.randomUUID().toString(),
     title: String,

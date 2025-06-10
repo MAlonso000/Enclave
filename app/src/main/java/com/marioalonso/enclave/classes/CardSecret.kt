@@ -13,8 +13,6 @@ class CardSecret (
     var brand: String = "Unknown",
     var expirationDate: String,
     var encryptedCVV: String,
-
-
 ): Secret(id, title, folderId) {
     override fun getContentRaw(): String {
         return "Owner: $ownerName, Card Number: $encryptedCardNumber, Brand: $brand, Expiration Date: $expirationDate, CVV: $encryptedCVV"

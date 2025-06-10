@@ -64,7 +64,7 @@ fun SecretData(
 //    val key = remember { AESCipherGCM.deriveKey("miClaveMaestra123".toCharArray(), salt) }
 
     Column() {
-        Text("Secreto", modifier)
+        Text(secret.title, modifier)
         if(switchState) {
             Text("prueba")
 //            Text(secret.getContent(key), modifier)
