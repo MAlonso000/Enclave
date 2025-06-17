@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="prueba" translatable="true">hola</string>
+    <string name="owner" translatable="true">Titular</string>
+    <string name="card_number">Nº de Tarjeta</string>
+    <string name="brand">Empresa</string>
+    <string name="expiration_date">Fecha Caducidad</string>
+    <string name="password">Contraseña</string>
+    <string name="note">Nota</string>
+    <string name="username">Usuario</string>
+    <string name="secret_confirmation">Eliminar secreto</string>
+    <string name="secret_confirmation_extended">¿Estás seguro de que quieres borrar este secreto?</string>
+    <string name="delete">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="secret_list">Lista de Secretos</string>
+    <string name="folder_name">Nombre de carpeta</string>
+    <string name="accept">Aceptar</string>
+    <string name="folders">Carpetas</string>
+    <string name="secrets">Secretos</string>
+    <string name="generate">Generar</string>
 </resources>

@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name" translatable="false">Enclave</string>
-    <string name="prueba" translatable="true">Hello</string>
+    <string name="owner" translatable="true">Owner</string>
+    <string name="card_number">Card Number</string>
+    <string name="brand">Company</string>
+    <string name="expiration_date">Expiration Date</string>
+    <string name="cvv" translatable="false">CVV</string>
+    <string name="note">Note</string>
+    <string name="username">Username</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="url" translatable="false">URL</string>
+    <string name="password">Password</string>
+    <string name="secret_confirmation">Delete secret</string>
+    <string name="secret_confirmation_extended">Are you sure you want to delete this secret?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="secret_list">Secrets List</string>
+    <string name="folder_name">Folder name</string>
+    <string name="accept">Accept</string>
+    <string name="folders">Folders</string>
+    <string name="secrets">Secrets</string>
+    <string name="generate">Generate</string>
+    <string name="pin" translatable="false">PIN</string>
 </resources>

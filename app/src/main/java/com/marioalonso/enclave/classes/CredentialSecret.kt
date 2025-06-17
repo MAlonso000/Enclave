@@ -10,6 +10,8 @@ class CredentialSecret(
     folderId : String = UUID.randomUUID().toString(),
     var username: String,
     var encryptedPassword: String,
+    var email: String,
+    var url: String
 ) : Secret(id, title, folderId) {
 
     override fun getContentRaw(): String {

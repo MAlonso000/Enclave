@@ -13,16 +13,22 @@ object SecretFactory {
                 encryptedCardNumber = data["encryptedCardNumber"] ?: "",
                 brand = data["brand"] ?: "Unknown",
                 expirationDate = data["expirationDate"] ?: "",
-                encryptedCVV = data["encryptedCVV"] ?: ""
+                encryptedCVV = data["encryptedCVV"] ?: "",
+                folderId = data["folderId"] ?: "",
+                encryptedPin = data["encryptedPin"] ?: ""
             )
             SecretType.CREDENTIAL -> CredentialSecret(
                 title = title,
                 username = data["username"] ?: "",
-                encryptedPassword = data["encryptedPassword"] ?: ""
+                encryptedPassword = data["encryptedPassword"] ?: "",
+                folderId = data["folderId"] ?: "",
+                email = data["email"] ?: "",
+                url = data["url"] ?: ""
             )
             SecretType.NOTE -> NoteSecret(
                 title = title,
-                encryptedNote = data["encryptedNote"] ?: ""
+                encryptedNote = data["encryptedNote"] ?: "",
+                folderId = data["folderId"] ?: ""
             )
         }
     }

@@ -4,15 +4,16 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.marioalonso.enclave.classes.Folder
 import com.marioalonso.enclave.dao.EnclaveDao
 import com.marioalonso.enclave.entities.*
 
 @Database(
     entities = [
         SecretEntity::class,
-        FolderEntity::class
+        Folder::class
     ],
-    version = 2, // Incrementa la versión de la base de datos
+    version = 5, // Incrementa la versión de la base de datos
     exportSchema = true
 )
 abstract class EnclaveDatabase : RoomDatabase() {

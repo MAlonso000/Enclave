@@ -14,6 +14,8 @@ import com.marioalonso.enclave.classes.Folder
 import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.items.SecretItem
+import com.marioalonso.enclave.layout.AppScaffold
+import com.marioalonso.enclave.lists.FolderList
 import com.marioalonso.enclave.lists.SecretList
 import com.marioalonso.enclave.ui.theme.EnclaveTheme
 import com.marioalonso.enclave.viewmodel.SecretViewModel
@@ -21,34 +23,30 @@ import com.marioalonso.enclave.viewmodel.SecretViewModel
 @Composable
 fun Screen(viewModel: SecretViewModel,) {
     val context = LocalContext.current
-    val fodler = Folder(
+    val folder = Folder(
         name = "Mis secretos",
     )
     val secrets = mutableListOf<Secret>()
-    secrets += NoteSecret(
-        folderId = fodler.folderId,
-        title = "Titulo",
-        encryptedNote = "cYljh820HF7IJ0hz+EZdq8rP0en3/+S//1n7Xmh2wvviDVO/7ev9/E88/AlcZUAgXymsauOe"
-    )
-    secrets += CredentialSecret(
-        title = "Titulo2",
-        username = "mario000",
-        encryptedPassword = "Dc/MYeD8tndtxNw6msww1rfrHlMU3SucU+tKksUxPlvso+jvz3lll3BLPhisU87RStXpI7x0"
-    )
-    secrets += NoteSecret(
-        title = "Titulo3",
-        encryptedNote = "cYljh820HF7IJ0hz+EZdq8rP0en3/+S//1n7Xmh2wvviDVO/7ev9/E88/AlcZUAgXymsauOe"
-    )
-    secrets += CredentialSecret(
-        title = "Titulo4",
-        username = "mario000",
-        encryptedPassword = "Dc/MYeD8tndtxNw6msww1rfrHlMU3SucU+tKksUxPlvso+jvz3lll3BLPhisU87RStXpI7x0"
-    )
-    SecretList(viewModel = viewModel, secrets = secrets, onItemClick = {  secret: Secret ->
-        Toast.makeText(
-            context,
-            "prueba",
-            Toast.LENGTH_SHORT
-        ).show()
-    })
+//    SecretList(viewModel = viewModel, secrets = secrets, onItemClick = {  secret: Secret ->
+//        Toast.makeText(
+//            context,
+//            "prueba",
+//            Toast.LENGTH_SHORT
+//        ).show()
+//    })
+//    FolderList(
+//        viewModel = viewModel,
+//        folders = listOf(folder),
+//        secrets = secrets,
+//        onFolderClick = { folder: Folder ->
+//            Toast.makeText(
+//                context,
+//                "Clicked on folder: ${folder.name}",
+//                Toast.LENGTH_SHORT
+//            ).show()
+//        }
+//    )
+//    AppScaffold(
+//        viewModel = viewModel
+//    )
 }

@@ -26,6 +26,7 @@ import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.items.SecretItem
 import com.marioalonso.enclave.screen.Screen
+import com.marioalonso.enclave.screens.MainScreen
 import com.marioalonso.enclave.ui.theme.EnclaveTheme
 import com.marioalonso.enclave.utils.AESCipherGCM
 import com.marioalonso.enclave.viewmodel.SecretViewModel
@@ -53,7 +54,8 @@ class MainActivity : ComponentActivity() {
                                 LocalContext.current.applicationContext as Application
                             )
                         )
-                        Screen(viewModel)
+//                        Screen(viewModel)
+                        MainScreen(viewModel)
                     }
 ////                    val salt = Base64.getDecoder().decode("Kb3oHhhNoWiCrcETeZ9HgQ==")
 ////                    val key = AESCipherGCM.deriveKey("miClaveMaestra123".toCharArray(), salt)

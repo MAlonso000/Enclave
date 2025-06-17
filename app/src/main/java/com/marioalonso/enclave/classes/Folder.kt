@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "folders")
 open class Folder(
     @PrimaryKey
-    val folderId: String = UUID.randomUUID().toString(),
-    val name: String,
+    var id: String = UUID.randomUUID().toString(),
+    var name: String,
 ) {
 }
