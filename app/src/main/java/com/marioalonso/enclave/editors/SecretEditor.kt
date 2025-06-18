@@ -19,15 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.classes.CardSecret
 import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.classes.Secret
+import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
 @Composable
 fun SecretEditor(
+    navController: NavController,
     viewModel: SecretViewModel,
     secret: Secret
 ) {
@@ -38,16 +41,16 @@ fun SecretEditor(
         modifier = Modifier
     ) {
         when (secret) {
-            is CredentialSecret -> CredentialSecretEditor(viewModel, secret)
-            is NoteSecret -> NoteSecretEditor(viewModel, secret)
-            is CardSecret -> CardSecretEditor(viewModel, secret)
+            is CredentialSecret -> CredentialSecretEditor(navController, viewModel, secret)
+            is NoteSecret -> NoteSecretEditor(navController, viewModel, secret)
+            is CardSecret -> CardSecretEditor(navController, viewModel, secret)
             else -> throw IllegalArgumentException("Unsupported secret type: ${secret::class.simpleName}")
         }
     }
 }
 
 @Composable
-fun CardSecretEditor(viewModel: SecretViewModel, secret: CardSecret) {
+fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, secret: CardSecret) {
     var title by remember { mutableStateOf(secret.title) }
     var ownerName by remember { mutableStateOf(secret.ownerName) }
     var encryptedCardNumber by remember { mutableStateOf(secret.encryptedCardNumber) }
@@ -65,6 +68,9 @@ fun CardSecretEditor(viewModel: SecretViewModel, secret: CardSecret) {
         secret.expirationDate = expirationDate
         secret.encryptedCVV = encryptedCVV
         viewModel.insertSecret(secret)
+        navController.navigate(NavRoutes.Secrets.route) {
+            popUpTo(NavRoutes.Home.route)
+        }
     }
     val onCanceled = {
 
@@ -127,13 +133,16 @@ fun CardSecretEditor(viewModel: SecretViewModel, secret: CardSecret) {
 }
 
 @Composable
-fun NoteSecretEditor(viewModel: SecretViewModel, secret: NoteSecret) {
+fun NoteSecretEditor(navController: NavController, viewModel: SecretViewModel, secret: NoteSecret) {
     var title by remember { mutableStateOf(secret.title) }
     var note by remember { mutableStateOf(secret.encryptedNote) }
     val onAccepted = {
         secret.title = title
         secret.encryptedNote = note
         viewModel.insertSecret(secret)
+        navController.navigate(NavRoutes.Secrets.route) {
+            popUpTo(NavRoutes.Home.route)
+        }
     }
     val onCanceled = {
 
@@ -169,7 +178,7 @@ fun NoteSecretEditor(viewModel: SecretViewModel, secret: NoteSecret) {
 }
 
 @Composable
-fun CredentialSecretEditor(viewModel: SecretViewModel, secret: CredentialSecret) {
+fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewModel, secret: CredentialSecret) {
     var title by remember { mutableStateOf(secret.title) }
     var username by remember { mutableStateOf(secret.username) }
     var password by remember { mutableStateOf(secret.encryptedPassword) }
@@ -183,6 +192,9 @@ fun CredentialSecretEditor(viewModel: SecretViewModel, secret: CredentialSecret)
         secret.url = url
         secret.email = email
         viewModel.insertSecret(secret)
+        navController.navigate(NavRoutes.Secrets.route) {
+            popUpTo(NavRoutes.Home.route)
+        }
     }
     val onCanceled = {
 

@@ -27,6 +27,9 @@ interface EnclaveDao {
 
     @Query("DELETE FROM secrets WHERE id = :id")
     suspend fun deleteSecretById(id: String)
+
+    @Query("DELETE FROM folders WHERE id = :id")
+    suspend fun deleteFolderById(id: String)
     // enregion
 
     // region Update

@@ -17,12 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.classes.Folder
+import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
 @Composable
-fun FolderEditor(viewModel: SecretViewModel, folder: Folder) {
+fun FolderEditor(
+    navController: NavController,
+    viewModel: SecretViewModel,
+    folder: Folder
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -40,6 +46,9 @@ fun FolderEditor(viewModel: SecretViewModel, folder: Folder) {
             onClick = {
                 folder.name = name
                 viewModel.insertFolder(folder)
+                navController.navigate(NavRoutes.Folders.route) {
+                    popUpTo(NavRoutes.Home.route)
+                }
             },
             modifier = Modifier.padding(10.dp)
         ) {

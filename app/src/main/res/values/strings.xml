@@ -14,11 +14,15 @@
     <string name="secret_confirmation_extended">Are you sure you want to delete this secret?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-    <string name="secret_list">Secrets List</string>
+    <string name="secret_list">Secret List</string>
     <string name="folder_name">Folder name</string>
     <string name="accept">Accept</string>
     <string name="folders">Folders</string>
     <string name="secrets">Secrets</string>
     <string name="generate">Generate</string>
     <string name="pin" translatable="false">PIN</string>
+    <string name="folder_list">Folder List</string>
+    <string name="folder_confirmation">Detele folder</string>
+    <string name="folder_confirmation_extended">Are you sure you want to delete this folder? All secrets inside are will be deleted too</string>
+    <string name="secrets_lowercase">secrets</string>
 </resources>

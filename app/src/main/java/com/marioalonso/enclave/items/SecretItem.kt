@@ -217,7 +217,6 @@ fun SwipeableSecretItem(
 ) {
     val dismissState = rememberSwipeToDismissBoxState()
     var showDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     LaunchedEffect(key1 = dismissState.currentValue) {
         when (dismissState.currentValue) {
@@ -319,8 +318,8 @@ fun SecretIcon(secret: Secret){
 
 @Composable
 fun SwitchIcon(switchState: Boolean, onSwitchChange: (Boolean) -> Unit) {
-    val drawableResource = if (switchState) R.drawable.eye_on_icon
-    else R.drawable.eye_off_icon
+    val drawableResource = if (switchState) R.drawable.eye_on
+    else R.drawable.eye_off
 
     Icon(
         painter = painterResource(id = drawableResource),

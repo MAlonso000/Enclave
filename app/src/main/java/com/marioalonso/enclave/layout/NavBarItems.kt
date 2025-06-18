@@ -9,7 +9,7 @@ object NavBarItems {
     val BarItems = listOf(
         BarItem(
             title = R.string.folders,
-            icon = R.drawable.folder_outline,
+            icon = R.drawable.folders,
             route = "folders"
         ),
         BarItem(

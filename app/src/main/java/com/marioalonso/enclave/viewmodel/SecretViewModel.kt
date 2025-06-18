@@ -69,13 +69,14 @@ class SecretViewModel(application: Application) : ViewModel() {
             )
         )
 
-        val secret = SecretFactory.createSecret(
-            SecretType.CREDENTIAL,
-            "Secreto de Prueba",
-            mapOf(
-                "username" to "testUser",
-                "encryptedPassword" to "testPassword"
-            )
+        val secret = CredentialSecret(
+            id = "secret1",
+            title = "Secreto General",
+//            folderId = null,
+            username = "generalUser",
+            encryptedPassword = "generalEncryptedPassword",
+            email = "james.k.polk@examplepetstore.com",
+            url = "https://examplepetstore.com"
         )
 
         insertSecret(cardSecret)
@@ -142,6 +143,12 @@ class SecretViewModel(application: Application) : ViewModel() {
     fun deleteSecret(secretId: String) {
         viewModelScope.launch {
             enclaveDao.deleteSecretById(secretId)
+        }
+    }
+
+    fun deleteFolder(folderId: String) {
+        viewModelScope.launch {
+            enclaveDao.deleteFolderById(folderId)
         }
     }
     // endregion

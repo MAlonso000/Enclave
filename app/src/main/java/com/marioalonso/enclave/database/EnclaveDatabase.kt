@@ -13,7 +13,7 @@ import com.marioalonso.enclave.entities.*
         SecretEntity::class,
         Folder::class
     ],
-    version = 5, // Incrementa la versión de la base de datos
+    version = 10, // Incrementa la versión de la base de datos
     exportSchema = true
 )
 abstract class EnclaveDatabase : RoomDatabase() {

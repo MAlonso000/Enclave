@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.marioalonso.enclave.classes.Folder
+import com.marioalonso.enclave.classes.NoteSecret
+import com.marioalonso.enclave.editors.FolderEditor
+import com.marioalonso.enclave.editors.SecretEditor
 import com.marioalonso.enclave.layout.AppScaffold
 import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.viewmodel.SecretViewModel
@@ -25,6 +29,18 @@ fun MainScreen(viewModel: SecretViewModel) {
         }
         composable(NavRoutes.Folders.route) {
             AppScaffold(navController, viewModel, NavRoutes.Folders.route)
+        }
+        composable(NavRoutes.SecretEditor.route) {
+            SecretEditor(navController, viewModel, NoteSecret(
+                title = "",
+                folderId = null,
+                encryptedNote = ""
+            ))
+        }
+        composable(NavRoutes.FolderEditor.route) { FolderEditor(navController, viewModel, Folder(
+                id = "",
+                name = ""
+            ))
         }
     }
 }

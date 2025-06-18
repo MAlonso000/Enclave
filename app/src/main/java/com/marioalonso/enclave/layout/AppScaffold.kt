@@ -113,14 +113,23 @@ fun AppScaffold(
             })
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO*/ },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Añadir"
-                )
+            if (route == NavRoutes.Secrets.route || route == NavRoutes.Folders.route) {
+                FloatingActionButton(
+                    onClick = {
+                        when (route) {
+//                            NavRoutes.Secrets.route -> navController.navigate(NavRoutes.SecretEditor.route + "/adding card" + "/${deckId}")
+                            NavRoutes.Secrets.route -> navController.navigate(NavRoutes.SecretEditor.route)
+                            NavRoutes.Folders.route -> navController.navigate(NavRoutes.FolderEditor.route)
+                        }
+                        //                    navController.navigate(NavRoutes.CardEditor.route)
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add card"
+                    )
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.End,

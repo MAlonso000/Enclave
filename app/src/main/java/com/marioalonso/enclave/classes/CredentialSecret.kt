@@ -7,7 +7,7 @@ import javax.crypto.SecretKey
 class CredentialSecret(
     id: String = UUID.randomUUID().toString(),
     title: String,
-    folderId : String = UUID.randomUUID().toString(),
+    folderId : String? = null,
     var username: String,
     var encryptedPassword: String,
     var email: String,

@@ -7,7 +7,7 @@ import javax.crypto.SecretKey
 class CardSecret (
     id: String = UUID.randomUUID().toString(),
     title: String,
-    folderId : String = UUID.randomUUID().toString(),
+    folderId : String? = null,
     var ownerName: String,
     var encryptedCardNumber: String,
     var encryptedPin: String,

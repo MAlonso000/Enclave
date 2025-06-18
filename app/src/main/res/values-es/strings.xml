@@ -17,4 +17,8 @@
     <string name="folders">Carpetas</string>
     <string name="secrets">Secretos</string>
     <string name="generate">Generar</string>
+    <string name="folder_list">Lista de Carpetas</string>
+    <string name="folder_confirmation">Eliminar carpeta</string>
+    <string name="folder_confirmation_extended">¿Estás seguro de que quieres borrar esta carpeta? Todos los secretos en ella serán borrados también</string>
+    <string name="secrets_lowercase">secretos</string>
 </resources>

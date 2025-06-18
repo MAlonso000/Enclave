@@ -7,7 +7,7 @@ import javax.crypto.SecretKey
 class NoteSecret(
     id: String = UUID.randomUUID().toString(),
     title: String,
-    folderId : String = UUID.randomUUID().toString(),
+    folderId : String? = null,
     var encryptedNote: String,
 ) : Secret(id, title, folderId) {
 
