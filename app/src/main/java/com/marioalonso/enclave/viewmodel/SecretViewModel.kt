@@ -192,7 +192,7 @@ class SecretViewModel(application: Application) : ViewModel() {
                 expirationDate = entity.expirationDate ?: "",
                 encryptedCVV = entity.encryptedCVV ?: ""
             )
-            else -> throw IllegalArgumentException("Tipo desconocido: ${entity.type}")
+            else -> throw IllegalArgumentException("Unknown type: ${entity.type}")
         }
     }
 }
