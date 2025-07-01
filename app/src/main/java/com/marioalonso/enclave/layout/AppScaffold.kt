@@ -46,33 +46,21 @@ import com.marioalonso.enclave.screens.SecretListScreen
 fun AppScaffold(
     navController: NavController,
     viewModel: SecretViewModel,
-    route: String
+    route: String,
+    folderId: String = "all"
 ) {
     val secrets = mutableListOf<Secret>()
     var selectedSecret by remember { mutableStateOf<Secret?>(null) }
+    var fabExpanded by remember { mutableStateOf(false) }
     Scaffold(
         content = { paddingValues ->
             Column(Modifier.padding(paddingValues)) {
-//                if (selectedSecret != null) {
-//                    SecretEditor(
-//                        viewModel = viewModel,
-//                        secret = selectedSecret!!
-//                    )
-//                } else {
-//                    // If no secret is selected, show the list of secrets
-//                    SecretList(
-//                        viewModel = viewModel,
-//                        secrets = secrets,
-//                        onItemClick = { secret: Secret ->
-//                            selectedSecret = secret
-//                        }
-//                    )
-//                }
                 when(route){
                     NavRoutes.Secrets.route -> {
                         SecretListScreen(
                             navController = navController,
                             viewModel = viewModel,
+                            folderId = folderId
                         )
                     }
                     NavRoutes.Folders.route -> {
@@ -82,13 +70,6 @@ fun AppScaffold(
                         )
                     }
                 }
-//                SecretList(
-//                    viewModel = viewModel,
-//                    secrets = secrets,
-//                    onItemClick = { secret: Secret ->
-//                        selectedSecret = secret
-//                    }
-//                )
             }
         },
         topBar = {
@@ -113,22 +94,29 @@ fun AppScaffold(
             })
         },
         floatingActionButton = {
-            if (route == NavRoutes.Secrets.route || route == NavRoutes.Folders.route) {
-                FloatingActionButton(
-                    onClick = {
-                        when (route) {
-//                            NavRoutes.Secrets.route -> navController.navigate(NavRoutes.SecretEditor.route + "/adding card" + "/${deckId}")
-                            NavRoutes.Secrets.route -> navController.navigate(NavRoutes.SecretEditor.route)
-                            NavRoutes.Folders.route -> navController.navigate(NavRoutes.FolderEditor.route)
-                        }
-                        //                    navController.navigate(NavRoutes.CardEditor.route)
+            if (route == NavRoutes.Secrets.route) {
+                ExpandableFab(
+                    isExpanded = fabExpanded,
+                    onFabToggle = { fabExpanded = !fabExpanded },
+                    onAddType1 = {
+                        fabExpanded = false
+                        navController.navigate(NavRoutes.SecretEditor.route + "/add_credential" + "/${folderId}")
                     },
+                    onAddType2 = {
+                        fabExpanded = false
+                        navController.navigate(NavRoutes.SecretEditor.route + "/add_note" + "/${folderId}")
+                    },
+                    onAddType3 = {
+                        fabExpanded = false
+                        navController.navigate(NavRoutes.SecretEditor.route + "/add_credit_card" + "/${folderId}")
+                    }
+                )
+            } else if (route == NavRoutes.Folders.route) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(NavRoutes.FolderEditor.route) },
                     containerColor = MaterialTheme.colorScheme.primary
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add card"
-                    )
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add folder")
                 }
             }
         },

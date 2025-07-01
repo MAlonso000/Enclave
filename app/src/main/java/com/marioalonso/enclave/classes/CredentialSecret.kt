@@ -19,7 +19,7 @@ class CredentialSecret(
     }
 
     override fun getContent(password: SecretKey): String {
-        val decryptedPassword = AESCipherGCM.decrypt(encryptedPassword, password)
+        val decryptedPassword = AESCipherGCM.decrypt(encryptedPassword)
         return "User: $username, Pass: $decryptedPassword"
     }
 

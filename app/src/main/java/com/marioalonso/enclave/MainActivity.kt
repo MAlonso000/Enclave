@@ -2,6 +2,7 @@ package com.marioalonso.enclave
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val owner = LocalViewModelStoreOwner.current
+                    val context = LocalContext.current
 
                     owner?.let {
                         val viewModel: SecretViewModel = viewModel(
@@ -54,25 +56,28 @@ class MainActivity : ComponentActivity() {
                                 LocalContext.current.applicationContext as Application
                             )
                         )
+
+                        // Inicializar la clave de cifrado
+//                        AESCipherGCM.initializeKey(context, "miClaveMaestra123")
+                        // Logs de prueba para verificar un cifrado de prueba
+//                        Log.d("MainActivity", "Clave de cifrado inicializada: ${AESCipherGCM.getCryptoKey()}")
+//                        val plainText = "Este es un texto de prueba"
+//                        val encryptedText = AESCipherGCM.encrypt(plainText, AESCipherGCM.getCryptoKey()!!)
+//                        Log.d("MainActivity", "Texto cifrado: $encryptedText")
+//                        val decryptedText = AESCipherGCM.decrypt(encryptedText, AESCipherGCM.getCryptoKey()!!)
+//                        Log.d("MainActivity", "Texto descifrado: $decryptedText")
+
 //                        Screen(viewModel)
                         MainScreen(viewModel)
                     }
-////                    val salt = Base64.getDecoder().decode("Kb3oHhhNoWiCrcETeZ9HgQ==")
-////                    val key = AESCipherGCM.deriveKey("miClaveMaestra123".toCharArray(), salt)
-////                    val text = AESCipherGCM.decrypt("1+c+q467KsyYzaUuU5S14ryechFuIOPY+A/Kw9HyUCgrYmdo8FHUkQ3CwXCsd0Iu+DCHfjIph5eA1vPtVkqT7L73EKeSUQ==", key)
-////                    Text(
-////                        text = text,
-////                        modifier = Modifier.padding(16.dp)
-////                    )
-////                    Column(
-////
-////                    ){
-////                        SecretItem(NoteSecret("Titulo", "cYljh820HF7IJ0hz+EZdq8rP0en3/+S//1n7Xmh2wvviDVO/7ev9/E88/AlcZUAgXymsauOe"))
-////                        SecretItem(CredentialSecret("Titulo", "mario000", "Dc/MYeD8tndtxNw6msww1rfrHlMU3SucU+tKksUxPlvso+jvz3lll3BLPhisU87RStXpI7x0"))
-////                    }
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AESCipherGCM.clearCryptoKey() // Limpia la clave al cerrar la aplicación
     }
 }
 

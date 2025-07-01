@@ -20,8 +20,8 @@ class CardSecret (
     }
 
     override fun getContent(password: SecretKey): String {
-        val decryptedCardNumber = AESCipherGCM.decrypt(encryptedCardNumber, password)
-        val decryptedCVV = AESCipherGCM.decrypt(encryptedCVV, password)
+        val decryptedCardNumber = AESCipherGCM.decrypt(encryptedCardNumber)
+        val decryptedCVV = AESCipherGCM.decrypt(encryptedCVV)
         return "Owner: $ownerName, Card Number: $decryptedCardNumber, PIN: $encryptedPin, Brand: $brand, Expiration Date: $expirationDate, CVV: $decryptedCVV"
     }
 

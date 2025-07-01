@@ -1,10 +1,12 @@
 package com.marioalonso.enclave.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.marioalonso.enclave.dao.EnclaveDao
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
@@ -31,58 +33,6 @@ class SecretViewModel(application: Application) : ViewModel() {
             secretEntities.map { entity -> mapToSecret(entity) }
         }
         folders = enclaveDao.getAllFolders()
-
-        deleteSecrets()
-        deleteFolders()
-
-        val folder1 = Folder(name = "Folder 1")
-        insertFolder(folder1)
-
-        val cardSecret = SecretFactory.createSecret(
-            SecretType.CARD,
-            "Mi Tarjeta",
-            mapOf(
-                "ownerName" to "Mario Alonso",
-                "encryptedCardNumber" to "encryptedNumber",
-                "brand" to "Visa",
-                "expirationDate" to "12/25",
-                "encryptedCVV" to "encryptedCVV",
-                "folderId" to folder1.id
-            )
-        )
-        val noteSecret = SecretFactory.createSecret(
-            SecretType.NOTE,
-            "Mi Nota",
-            mapOf(
-                "encryptedNote" to "encryptedNoteContent",
-                "folderId" to folder1.id
-            )
-        )
-
-        val credentialSecret = SecretFactory.createSecret(
-            SecretType.CREDENTIAL,
-            "Credencial de Usuario",
-            mapOf(
-                "username" to "usuario123",
-                "encryptedPassword" to "encryptedPassword",
-                "folderId" to folder1.id
-            )
-        )
-
-        val secret = CredentialSecret(
-            id = "secret1",
-            title = "Secreto General",
-//            folderId = null,
-            username = "generalUser",
-            encryptedPassword = "generalEncryptedPassword",
-            email = "james.k.polk@examplepetstore.com",
-            url = "https://examplepetstore.com"
-        )
-
-        insertSecret(cardSecret)
-        insertSecret(noteSecret)
-        insertSecret(credentialSecret)
-        insertSecret(secret)
     }
 
 
@@ -97,6 +47,8 @@ class SecretViewModel(application: Application) : ViewModel() {
                     type = "Credential",
                     username = secret.username,
                     encryptedPassword = secret.encryptedPassword,
+                    email = secret.email,
+                    url = secret.url
                 )
                 is NoteSecret -> SecretEntity(
                     id = secret.id,
@@ -114,9 +66,10 @@ class SecretViewModel(application: Application) : ViewModel() {
                     encryptedCardNumber = secret.encryptedCardNumber,
                     brand = secret.brand,
                     expirationDate = secret.expirationDate,
-                    encryptedCVV = secret.encryptedCVV
+                    encryptedCVV = secret.encryptedCVV,
+                    encryptedPin = secret.encryptedPin
                 )
-                else -> throw IllegalArgumentException("Tipo de secreto desconocido")
+                else -> throw IllegalArgumentException("Unknown secret type")
             }
             enclaveDao.insertSecret(secretEntity)
         }
@@ -157,9 +110,30 @@ class SecretViewModel(application: Application) : ViewModel() {
     // endregion
 
     // region Query
-    fun getSecretsByFolderName(folderName: String): LiveData<List<Secret>> {
-        return enclaveDao.getSecretsByFolderName(folderName).map { secretEntities ->
+    fun getSecretsByFolderId(folderId: String): LiveData<List<Secret>> {
+        return enclaveDao.getSecretsByFolderId(folderId).map { secretEntities ->
             secretEntities.map { entity -> mapToSecret(entity) }
+        }
+    }
+
+    fun getFolderById(folderId: String) = enclaveDao.getFolderById(folderId)
+
+//    fun getSecretById(secretId: String): LiveData<Secret?> {
+//        Log.d("SecretViewModel", "Buscando secreto con ID: -$secretId-")
+//        val secret = enclaveDao.getSecretById(secretId)
+//        secret.observeForever { secretEntity ->
+//            Log.d("SecretViewModel", "Resultado: ${secretEntity?.id ?: "null"}")
+//        }
+//        secret.removeObserver { }
+//        return secret.map { entity ->
+//            entity?.let { mapToSecret(it) }
+//        }
+//    }
+    fun getSecretById(secretId: String): LiveData<Secret?> {
+        return enclaveDao.getSecretById(secretId).map { entity ->
+            entity?.let {
+                mapToSecret(it)
+            }
         }
     }
     // endregion

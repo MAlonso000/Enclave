@@ -16,7 +16,7 @@ class NoteSecret(
     }
 
     override fun getContent(password: SecretKey): String {
-        val decryptedNote = AESCipherGCM.decrypt(encryptedNote, password)
+        val decryptedNote = AESCipherGCM.decrypt(encryptedNote)
         return "Contenido: $decryptedNote"
     }
 

@@ -25,4 +25,5 @@
     <string name="folder_confirmation">Detele folder</string>
     <string name="folder_confirmation_extended">Are you sure you want to delete this folder? All secrets inside are will be deleted too</string>
     <string name="secrets_lowercase">secrets</string>
+    <string name="folder">Folder</string>
 </resources>

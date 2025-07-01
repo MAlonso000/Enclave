@@ -47,17 +47,12 @@ interface EnclaveDao {
     fun getAllFolders(): LiveData<List<Folder>>
 
     @Query("SELECT * FROM secrets WHERE id = :id")
-    fun getSecretById(id: String): SecretEntity?
+    fun getSecretById(id: String): LiveData<SecretEntity?>
 
     @Query("SELECT * FROM secrets WHERE folderId = :folderId")
-    fun getSecretsByFolderId(folderId: String): List<SecretEntity>
+    fun getSecretsByFolderId(folderId: String): LiveData<List<SecretEntity>>
 
-    @Query("""
-    SELECT secrets.* 
-    FROM secrets 
-    INNER JOIN folders ON secrets.folderId = folders.id 
-    WHERE folders.name = :folderName
-    """)
-    fun getSecretsByFolderName(folderName: String): LiveData<List<SecretEntity>>
+    @Query("SELECT * FROM folders WHERE id = :folderId")
+    fun getFolderById(folderId: String): LiveData<Folder?>
     // endregion
 }

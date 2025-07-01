@@ -42,6 +42,7 @@ import com.marioalonso.enclave.R
 import com.marioalonso.enclave.classes.CardSecret
 import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
+import com.marioalonso.enclave.utils.AESCipherGCM
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
 //@Composable
@@ -105,6 +106,10 @@ fun display(input: String): String {
     return if (input == null || input.isBlank()) "N/A" else input
 }
 
+fun displayEncrypted(input: String): String {
+    return if (input == null || input.isBlank()) "N/A" else AESCipherGCM.decrypt(input)
+}
+
 @Composable
 fun SecretData(
     secret: NoteSecret,
@@ -129,7 +134,7 @@ fun SecretData(
         ) {
             Text(secret.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (switchState) {
-                Text("${stringResource(R.string.note)}: ${display(secret.encryptedNote)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+                Text("${stringResource(R.string.note)}: ${displayEncrypted(secret.encryptedNote)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
             }
         }
     }
@@ -162,11 +167,11 @@ fun SecretData(
             Text(secret.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (switchState) {
                 Text("${stringResource(R.string.owner)}: ${display(secret.ownerName)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
-                Text("${stringResource(R.string.card_number)}: ${display(secret.encryptedCardNumber)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
-                Text("${stringResource(R.string.pin)}: ${display(secret.encryptedPin)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+                Text("${stringResource(R.string.card_number)}: ${displayEncrypted(secret.encryptedCardNumber)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+                Text("${stringResource(R.string.pin)}: ${displayEncrypted(secret.encryptedPin)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                 Text("${stringResource(R.string.brand)}: ${display(secret.brand)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                 Text("${stringResource(R.string.expiration_date)}: ${display(secret.expirationDate)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
-                Text("${stringResource(R.string.cvv)}: ${display(secret.encryptedCVV)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+                Text("${stringResource(R.string.cvv)}: ${displayEncrypted(secret.encryptedCVV)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
             }
         }
     }
@@ -201,7 +206,7 @@ fun SecretData(
                 Text("${stringResource(R.string.username)}: ${display(secret.username)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                 Text("${stringResource(R.string.email)}: ${display(secret.email)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                 Text("${stringResource(R.string.url)}: ${display(secret.url)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
-                Text("${stringResource(R.string.password)}: ${display(secret.encryptedPassword)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
+                Text("${stringResource(R.string.password)}: ${displayEncrypted(secret.encryptedPassword)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
             }
         }
     }
