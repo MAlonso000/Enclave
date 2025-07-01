@@ -306,17 +306,17 @@ fun SecretIcon(secret: Secret){
         is NoteSecret -> Icon(
             painter = painterResource(id = R.drawable.note_icon),
             contentDescription = "Note Icon",
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         is CardSecret -> Icon(
             painter = painterResource(id = R.drawable.credit_icon),
             contentDescription = "Credit Card Icon",
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
         is CredentialSecret -> Icon(
             painter = painterResource(id = R.drawable.key_icon),
             contentDescription = "Key Icon",
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

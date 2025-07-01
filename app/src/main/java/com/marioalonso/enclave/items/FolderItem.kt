@@ -64,7 +64,7 @@ fun FolderItem(
             Icon(
                 painter = painterResource(id = R.drawable.folder),
                 contentDescription = "Note Icon",
-                tint = MaterialTheme.colorScheme.onSurface
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = folder.name,
