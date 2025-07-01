@@ -8,7 +8,7 @@ class CardSecret (
     id: String = UUID.randomUUID().toString(),
     title: String,
     folderId : String? = null,
-    var  ownerName: String,
+    var ownerName: String,
     var encryptedCardNumber: String,
     var encryptedPin: String,
     var brand: String = "Unknown",
