@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.R
@@ -86,14 +90,19 @@ fun SecretItem(
     val onSwitchChange = { it: Boolean -> switchState = it }
 
     Row(
-        modifier.fillMaxWidth().padding(all = 10.dp).clickable { onItemClick(secret) },
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 10.dp)
+            .clickable { onItemClick(secret) },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
     ) {
-        when (secret) {
-            is NoteSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
-            is CardSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
-            is CredentialSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
+        Box(modifier = Modifier.weight(1f)) {
+            when (secret) {
+                is NoteSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
+                is CardSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
+                is CredentialSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
+            }
         }
         SwitchIcon(
             switchState = switchState,
@@ -132,7 +141,13 @@ fun SecretData(
         Column(
             verticalArrangement = Arrangement.Top,
         ) {
-            Text(secret.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = secret.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             if (switchState) {
                 Text("${stringResource(R.string.note)}: ${displayEncrypted(secret.encryptedNote)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
             }
@@ -164,7 +179,13 @@ fun SecretData(
         Column(
             verticalArrangement = Arrangement.Top,
         ) {
-            Text(secret.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = secret.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             if (switchState) {
                 Text("${stringResource(R.string.owner)}: ${display(secret.ownerName)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                 Text("${stringResource(R.string.card_number)}: ${displayEncrypted(secret.encryptedCardNumber)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
@@ -201,7 +222,13 @@ fun SecretData(
             verticalArrangement = Arrangement.Top,
         ) {
 //            Text(secret.title, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(secret.title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = secret.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             if (switchState) {
                 Text("${stringResource(R.string.username)}: ${display(secret.username)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
                 Text("${stringResource(R.string.email)}: ${display(secret.email)}", modifier, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.secondary)
@@ -239,19 +266,23 @@ fun SwipeableSecretItem(
             title = { Text(stringResource(R.string.secret_confirmation)) },
             text = { Text(stringResource(R.string.secret_confirmation_extended)) },
             confirmButton = {
-                Text(
-                    stringResource(R.string.delete),
-                    modifier = Modifier.clickable {
+                Button(onClick = {
                         viewModel.deleteSecret(secret.id)
                         showDialog = false
-                    }
-                )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text(
+                        stringResource(R.string.delete)
+                    )
+                }
             },
             dismissButton = {
-                Text(
-                    stringResource(R.string.cancel),
-                    modifier = Modifier.clickable { showDialog = false }
-                )
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
             }
         )
     }

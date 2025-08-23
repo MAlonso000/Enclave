@@ -26,7 +26,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.items.SecretItem
-import com.marioalonso.enclave.screen.Screen
 import com.marioalonso.enclave.screens.MainScreen
 import com.marioalonso.enclave.ui.theme.EnclaveTheme
 import com.marioalonso.enclave.utils.AESCipherGCM
@@ -56,18 +55,6 @@ class MainActivity : ComponentActivity() {
                                 LocalContext.current.applicationContext as Application
                             )
                         )
-
-                        // Inicializar la clave de cifrado
-//                        AESCipherGCM.initializeKey(context, "miClaveMaestra123")
-                        // Logs de prueba para verificar un cifrado de prueba
-//                        Log.d("MainActivity", "Clave de cifrado inicializada: ${AESCipherGCM.getCryptoKey()}")
-//                        val plainText = "Este es un texto de prueba"
-//                        val encryptedText = AESCipherGCM.encrypt(plainText, AESCipherGCM.getCryptoKey()!!)
-//                        Log.d("MainActivity", "Texto cifrado: $encryptedText")
-//                        val decryptedText = AESCipherGCM.decrypt(encryptedText, AESCipherGCM.getCryptoKey()!!)
-//                        Log.d("MainActivity", "Texto descifrado: $decryptedText")
-
-//                        Screen(viewModel)
                         MainScreen(viewModel)
                     }
                 }

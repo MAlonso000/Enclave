@@ -19,7 +19,9 @@ import com.marioalonso.enclave.classes.SecretFactory
 import com.marioalonso.enclave.classes.SecretType
 import com.marioalonso.enclave.database.EnclaveDatabase
 import com.marioalonso.enclave.entities.SecretEntity
+import com.marioalonso.enclave.utils.AESCipherGCM
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SecretViewModel(application: Application) : ViewModel() {
 
@@ -169,7 +171,197 @@ class SecretViewModel(application: Application) : ViewModel() {
             else -> throw IllegalArgumentException("Unknown type: ${entity.type}")
         }
     }
+
+
+
+//    // Almacenamiento temporal para los SecretEntity descifrados
+//    private var temporaryDecryptedSecrets = mutableListOf<SecretEntity>()
+//
+//    /**
+//     * Descifra todos los secretos y guarda los objetos SecretEntity temporalmente en memoria
+//     * para su posterior recifrado con nueva clave
+//     */
+//    fun decryptAllSecrets() = viewModelScope.launch {
+//        temporaryDecryptedSecrets.clear()
+//
+//        val allSecrets = enclaveDao.getAllSecretsSync()
+//
+//        for (secretEntity in allSecrets) {
+//            // Creamos una copia del SecretEntity para modificarla
+//            val decryptedEntity = when (secretEntity.type) {
+//                "Credential" -> {
+//                    val newEntity = secretEntity.copy()
+//                    secretEntity.encryptedPassword?.let {
+//                        // Guardamos la contraseña descifrada en el mismo campo
+//                        newEntity.encryptedPassword = AESCipherGCM.decrypt(it)
+//                    }
+//                    newEntity
+//                }
+//                "Note" -> {
+//                    val newEntity = secretEntity.copy()
+//                    secretEntity.encryptedNote?.let {
+//                        newEntity.encryptedNote = AESCipherGCM.decrypt(it)
+//                    }
+//                    newEntity
+//                }
+//                "Card" -> {
+//                    val newEntity = secretEntity.copy()
+//                    secretEntity.encryptedCardNumber?.let {
+//                        newEntity.encryptedCardNumber = AESCipherGCM.decrypt(it)
+//                    }
+//                    secretEntity.encryptedCVV?.let {
+//                        newEntity.encryptedCVV = AESCipherGCM.decrypt(it)
+//                    }
+//                    secretEntity.encryptedPin?.let {
+//                        newEntity.encryptedPin = AESCipherGCM.decrypt(it)
+//                    }
+//                    newEntity
+//                }
+//                else -> secretEntity
+//            }
+//
+//            temporaryDecryptedSecrets.add(decryptedEntity)
+//        }
+//    }
+//
+//    /**
+//     * Recifra todos los secretos utilizando la nueva clave maestra
+//     */
+//    fun encryptAllSecrets() = viewModelScope.launch {
+//        for (decryptedEntity in temporaryDecryptedSecrets) {
+//            // Creamos una nueva entidad con los valores recifrados
+//            val encryptedEntity = when (decryptedEntity.type) {
+//                "Credential" -> {
+//                    val newEntity = decryptedEntity.copy()
+//                    decryptedEntity.encryptedPassword?.let {
+//                        newEntity.encryptedPassword = AESCipherGCM.encrypt(it)
+//                    }
+//                    newEntity
+//                }
+//                "Note" -> {
+//                    val newEntity = decryptedEntity.copy()
+//                    decryptedEntity.encryptedNote?.let {
+//                        newEntity.encryptedNote = AESCipherGCM.encrypt(it)
+//                    }
+//                    newEntity
+//                }
+//                "Card" -> {
+//                    val newEntity = decryptedEntity.copy()
+//                    decryptedEntity.encryptedCardNumber?.let {
+//                        newEntity.encryptedCardNumber = AESCipherGCM.encrypt(it)
+//                    }
+//                    decryptedEntity.encryptedCVV?.let {
+//                        newEntity.encryptedCVV = AESCipherGCM.encrypt(it)
+//                    }
+//                    decryptedEntity.encryptedPin?.let {
+//                        newEntity.encryptedPin = AESCipherGCM.encrypt(it)
+//                    }
+//                    newEntity
+//                }
+//                else -> decryptedEntity
+//            }
+//
+//            enclaveDao.updateSecret(encryptedEntity)
+//        }
+//
+//        // Limpiar datos temporales por seguridad
+//        temporaryDecryptedSecrets.clear()
+//    }
+
+    // Almacenamiento temporal para los SecretEntity descifrados
+    private var temporaryDecryptedSecrets = mutableListOf<SecretEntity>()
+
+    /**
+     * Descifra todos los secretos de forma síncrona
+     */
+    fun decryptAllSecrets() {
+        temporaryDecryptedSecrets.clear()
+
+        // Obtenemos todos los secretos de forma síncrona bloqueante
+        val allSecrets = runBlocking { enclaveDao.getAllSecretsSync() }
+
+        for (secretEntity in allSecrets) {
+            val decryptedEntity = when (secretEntity.type) {
+                "Credential" -> {
+                    val newEntity = secretEntity.copy()
+                    secretEntity.encryptedPassword?.let {
+                        newEntity.encryptedPassword = AESCipherGCM.decrypt(it)
+                    }
+                    newEntity
+                }
+                "Note" -> {
+                    val newEntity = secretEntity.copy()
+                    secretEntity.encryptedNote?.let {
+                        newEntity.encryptedNote = AESCipherGCM.decrypt(it)
+                    }
+                    newEntity
+                }
+                "Card" -> {
+                    val newEntity = secretEntity.copy()
+                    secretEntity.encryptedCardNumber?.let {
+                        newEntity.encryptedCardNumber = AESCipherGCM.decrypt(it)
+                    }
+                    secretEntity.encryptedCVV?.let {
+                        newEntity.encryptedCVV = AESCipherGCM.decrypt(it)
+                    }
+                    secretEntity.encryptedPin?.let {
+                        newEntity.encryptedPin = AESCipherGCM.decrypt(it)
+                    }
+                    newEntity
+                }
+                else -> secretEntity
+            }
+
+            temporaryDecryptedSecrets.add(decryptedEntity)
+        }
+    }
+
+    /**
+     * Recifra todos los secretos de forma síncrona
+     */
+    fun encryptAllSecrets() {
+        for (decryptedEntity in temporaryDecryptedSecrets) {
+            val encryptedEntity = when (decryptedEntity.type) {
+                "Credential" -> {
+                    val newEntity = decryptedEntity.copy()
+                    decryptedEntity.encryptedPassword?.let {
+                        newEntity.encryptedPassword = AESCipherGCM.encrypt(it)
+                    }
+                    newEntity
+                }
+                "Note" -> {
+                    val newEntity = decryptedEntity.copy()
+                    decryptedEntity.encryptedNote?.let {
+                        newEntity.encryptedNote = AESCipherGCM.encrypt(it)
+                    }
+                    newEntity
+                }
+                "Card" -> {
+                    val newEntity = decryptedEntity.copy()
+                    decryptedEntity.encryptedCardNumber?.let {
+                        newEntity.encryptedCardNumber = AESCipherGCM.encrypt(it)
+                    }
+                    decryptedEntity.encryptedCVV?.let {
+                        newEntity.encryptedCVV = AESCipherGCM.encrypt(it)
+                    }
+                    decryptedEntity.encryptedPin?.let {
+                        newEntity.encryptedPin = AESCipherGCM.encrypt(it)
+                    }
+                    newEntity
+                }
+                else -> decryptedEntity
+            }
+
+            // Actualización síncrona bloqueante de la BD
+            runBlocking { enclaveDao.updateSecret(encryptedEntity) }
+        }
+
+        // Limpiar datos temporales por seguridad
+        temporaryDecryptedSecrets.clear()
+    }
 }
+
+
 
 class SecretViewModelFactory(val application: Application) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

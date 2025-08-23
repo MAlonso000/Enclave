@@ -15,25 +15,49 @@ import kotlin.apply
 object AESCipherGCM {
 
     private var cryptoKey: SecretKey? = null
+    private var isAuthenticated = false
 
     private const val PREFS_NAME = "encrypted_prefs"
     private const val VERIFICATION_KEY = "verification_text"
+    private const val AUTH_STATE_KEY = "auth_state"
 
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
     private const val KEY_SIZE = 256 // bits
-    private const val IV_SIZE = 12 // bytes (96 bits, recomendado para GCM)
+    private const val IV_SIZE = 12 // bytes
     private const val TAG_SIZE = 128 // bits
     private const val SALT_SIZE = 16 // bytes
     private const val ITERATIONS = 100_000
 
     fun initializeKey(context: Context, password: String) {
-        if (cryptoKey != null) {
-            return // La clave ya está inicializada
-        }
         val existingSalt = getSalt(context)
         val salt = existingSalt ?: generateSalt().also { saveSalt(context, it) }
         val key = deriveKey(password, salt)
         cryptoKey = key
+        isAuthenticated = true
+        saveAuthState(context, true)
+    }
+
+    fun isKeyInitialized(context: Context): Boolean {
+        // Si la clave está en memoria, todo bien
+        if (cryptoKey != null) return true
+
+        // Si no está en memoria pero estaba autenticado, intentar recuperar la sesión
+        if (getAuthState(context)) {
+            return false // La clave se perdió pero estaba autenticado
+        }
+
+        // No estaba autenticado
+        return false
+    }
+
+    private fun saveAuthState(context: Context, state: Boolean) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences.edit { putBoolean(AUTH_STATE_KEY, state) }
+    }
+
+    private fun getAuthState(context: Context): Boolean {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(AUTH_STATE_KEY, false)
     }
 
     fun initializeVerificationText(context: Context) {
@@ -44,7 +68,7 @@ object AESCipherGCM {
 
     fun storeVerificationText(context: Context, encryptedText: String) {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        sharedPreferences.edit() { putString(VERIFICATION_KEY, encryptedText) }
+        sharedPreferences.edit { putString(VERIFICATION_KEY, encryptedText) }
     }
 
     fun getVerificationText(context: Context): String? {
@@ -53,19 +77,16 @@ object AESCipherGCM {
     }
 
     fun verifyPassword(context: Context, password: String): Boolean {
-        // Cogemos el salt y si es null devolvemos false
         val salt = getSalt(context) ?: return false
-        // Derivamos la clave de cifrado a partir de la contraseña y el salt
         val derivedKey = deriveKey(password, salt)
 
         val encryptedText = getVerificationText(context) ?: return false
         return try {
             decrypt(encryptedText, verifyingKey = derivedKey)
-            // Si la desencriptación es exitosa, inicializamos la contraseña y devolvemos true
             initializeKey(context, password)
             true
         } catch (e: Exception) {
-            false // Si ocurre un error, la contraseña es incorrecta
+            false
         }
     }
 
@@ -74,7 +95,13 @@ object AESCipherGCM {
     }
 
     fun clearCryptoKey() {
-        cryptoKey = null // Borra la clave de memoria
+        cryptoKey = null
+        isAuthenticated = false
+    }
+
+    fun logout(context: Context) {
+        clearCryptoKey()
+        saveAuthState(context, false)
     }
 
     fun generateSalt(): ByteArray {

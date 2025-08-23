@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -113,19 +116,23 @@ fun SwipeableDeckItem(
             title = { Text(stringResource(R.string.folder_confirmation)) },
             text = { Text(stringResource(R.string.folder_confirmation_extended)) },
             confirmButton = {
-                Text(
-                    stringResource(R.string.delete),
-                    modifier = Modifier.clickable {
-                        viewModel.deleteFolder(folder.id)
-                        showDialog = false
-                    }
-                )
+                Button(onClick = {
+                    viewModel.deleteFolder(folder.id)
+                    showDialog = false
+                },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                ) {
+                    Text(
+                        stringResource(R.string.delete)
+                    )
+                }
             },
             dismissButton = {
-                Text(
-                    stringResource(R.string.cancel),
-                    modifier = Modifier.clickable { showDialog = false }
-                )
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
             }
         )
     }

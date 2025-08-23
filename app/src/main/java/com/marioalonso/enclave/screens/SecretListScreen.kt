@@ -9,11 +9,20 @@ import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.lists.SecretList
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import com.marioalonso.enclave.navigation.NavRoutes
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.marioalonso.enclave.R
 
 @Composable
 fun SecretListScreen(
@@ -38,6 +47,15 @@ fun SecretListScreen(
             NavRoutes.SecretEditor.route + "/${secret.id}" + "/${secret.folderId ?: "all"}"
         )
     }
-    SecretList(viewModel = viewModel, secrets = secrets, onItemClick = onSecretClick, folderId = folderId)
-
+    if (secrets.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(stringResource(R.string.no_secrets))
+        }
+    }
+    else{
+        SecretList(viewModel = viewModel, secrets = secrets, onItemClick = onSecretClick, folderId = folderId)
+    }
 }

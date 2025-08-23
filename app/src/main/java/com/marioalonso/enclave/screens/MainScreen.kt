@@ -25,7 +25,7 @@ fun MainScreen(viewModel: SecretViewModel) {
         startDestination = NavRoutes.Home.route
     ) {
         composable(NavRoutes.Home.route) {
-            Home(navController, context)
+            Home(navController, viewModel, context)
         }
         composable(NavRoutes.Secrets.route) {
             AppScaffold(navController, viewModel, NavRoutes.Secrets.route)
@@ -39,13 +39,6 @@ fun MainScreen(viewModel: SecretViewModel) {
         composable(NavRoutes.Folders.route) {
             AppScaffold(navController, viewModel, NavRoutes.Folders.route)
         }
-//        composable(NavRoutes.SecretEditor.route) {
-//            SecretEditor(navController, viewModel, NoteSecret(
-//                title = "",
-//                folderId = null,
-//                encryptedNote = ""
-//            ))
-//        }
         composable(NavRoutes.SecretEditor.route + "/{secret_id}" + "/{folder_id}") { backEntry ->
             val secretId = backEntry.arguments?.getString("secret_id")
             val folderId = backEntry.arguments?.getString("folder_id")
@@ -58,6 +51,12 @@ fun MainScreen(viewModel: SecretViewModel) {
         composable(NavRoutes.FolderEditor.route) { FolderEditor(navController, viewModel, Folder(
                 name = ""
             ))
+        }
+        composable(NavRoutes.PasswordGenerator.route) {
+            PasswordGeneratorScreen(navController)
+        }
+        composable(NavRoutes.ChangePassword.route) {
+            ChangePasswordScreen(navController, viewModel)
         }
     }
 }

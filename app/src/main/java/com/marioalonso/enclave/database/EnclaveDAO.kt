@@ -41,6 +41,9 @@ interface EnclaveDao {
     // region Query
 
     @Query("SELECT * FROM secrets")
+    suspend fun getAllSecretsSync(): List<SecretEntity>
+
+    @Query("SELECT * FROM secrets")
     fun getAllSecrets(): LiveData<List<SecretEntity>>
 
     @Query("SELECT * FROM folders")

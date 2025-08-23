@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.marioalonso.enclave.navigation.NavRoutes
 
 @Composable
 fun AppBottomNavigationBar(navController: NavController) {
@@ -23,8 +24,10 @@ fun AppBottomNavigationBar(navController: NavController) {
                 selected = currentRoute == navItem.route,
                 onClick = {
                     navController.navigate(navItem.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = false
+                        if(navItem.route != NavRoutes.PasswordGenerator.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = false
+                            }
                         }
                         launchSingleTop = true
                         restoreState = true
