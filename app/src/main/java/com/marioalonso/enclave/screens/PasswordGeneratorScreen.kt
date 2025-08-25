@@ -1,11 +1,28 @@
 package com.marioalonso.enclave.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -20,6 +37,11 @@ import androidx.navigation.NavController
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.utils.PasswordGenerator
 
+/**
+ * Pantalla para generar contraseñas seguras.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ */
 @Composable
 fun PasswordGeneratorScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
@@ -33,7 +55,6 @@ fun PasswordGeneratorScreen(navController: NavController) {
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
-    // Generar contraseña inicial
     LaunchedEffect(key1 = true) {
         generatePassword(
             passwordLength, useUppercase, useLowercase,
@@ -54,7 +75,6 @@ fun PasswordGeneratorScreen(navController: NavController) {
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        // Mostrar contraseña
         OutlinedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,7 +107,6 @@ fun PasswordGeneratorScreen(navController: NavController) {
             }
         }
 
-        // Controles
         Text(
             text = "${stringResource(R.string.length)}: $passwordLength",
             modifier = Modifier.padding(top = 10.dp)
@@ -113,8 +132,6 @@ fun PasswordGeneratorScreen(navController: NavController) {
             onAvoidAmbiguousChange = { avoidAmbiguous = it }
         )
 
-//        Spacer(modifier = Modifier.weight(1f))
-
         TextButton(
             onClick = { navController.popBackStack() }
         ) {
@@ -138,6 +155,17 @@ fun PasswordGeneratorScreen(navController: NavController) {
     }
 }
 
+/**
+ * Genera una contraseña segura basada en las opciones proporcionadas.
+ *
+ * @param length Longitud de la contraseña.
+ * @param useUpper Incluir letras mayúsculas.
+ * @param useLower Incluir letras minúsculas.
+ * @param useDigits Incluir dígitos.
+ * @param useSymbols Incluir símbolos.
+ * @param avoidAmbiguous Evitar caracteres ambiguos (como 'O' y '0').
+ * @return La contraseña generada o null si no se pueden generar con las opciones dadas.
+ */
 private fun generatePassword(
     length: Int,
     useUpper: Boolean,
@@ -155,11 +183,25 @@ private fun generatePassword(
             useSymbols = useSymbols,
             avoidAmbiguous = avoidAmbiguous
         )
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         null
     }
 }
 
+/**
+ * Composable que muestra las opciones para generar la contraseña.
+ *
+ * @param useLower Estado de inclusión de letras minúsculas.
+ * @param onLowerChange Callback para cambiar el estado de inclusión de letras minúsculas.
+ * @param useUpper Estado de inclusión de letras mayúsculas.
+ * @param onUpperChange Callback para cambiar el estado de inclusión de letras mayúsculas.
+ * @param useDigits Estado de inclusión de dígitos.
+ * @param onDigitsChange Callback para cambiar el estado de inclusión de dígitos.
+ * @param useSymbols Estado de inclusión de símbolos.
+ * @param onSymbolsChange Callback para cambiar el estado de inclusión de símbolos.
+ * @param avoidAmbiguous Estado de evitar caracteres ambiguos.
+ * @param onAvoidAmbiguousChange Callback para cambiar el estado de evitar caracteres ambiguos.
+ */
 @Composable
 fun PasswordGeneratorOptions(
     useLower: Boolean,
@@ -238,6 +280,13 @@ fun PasswordGeneratorOptions(
     }
 }
 
+/**
+ * Composable que muestra una opción con un interruptor (Switch).
+ *
+ * @param text Texto descriptivo de la opción.
+ * @param checked Estado del interruptor.
+ * @param onCheckedChange Callback para cambiar el estado del interruptor.
+ */
 @Composable
 fun CharacterOptionSwitch(
     text: String,

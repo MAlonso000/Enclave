@@ -1,7 +1,6 @@
 package com.marioalonso.enclave.editors
 
 import android.icu.util.Calendar
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +12,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,31 +37,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.classes.CardSecret
 import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
-import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.utils.AESCipherGCM
 import com.marioalonso.enclave.viewmodel.SecretViewModel
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.style.TextAlign
 
+/**
+ * Composable para editar o crear un secreto (credencial, nota o tarjeta).
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ * @param viewModel ViewModel que maneja la lógica de negocio y los datos.
+ * @param secretId ID del secreto a editar. Si se está creando un nuevo secreto, se pasa "add_credential", "add_note" o "add_credit_card".
+ * @param folderId ID de la carpeta en la que se creará el nuevo secreto. Si es "all", no se asigna ninguna carpeta.
+ */
 @Composable
 fun SecretEditor(
     navController: NavController,
@@ -125,6 +126,15 @@ fun SecretEditor(
     }
 }
 
+/**
+* Composable para editar o crear un secreto de tipo tarjeta de crédito.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ * @param viewModel ViewModel que maneja la lógica de negocio y los datos.
+ * @param secret El secreto de tipo CardSecret a editar o crear.
+ * @param folderId ID de la carpeta en la que se creará el nuevo secreto. Si es "all", no se asigna ninguna carpeta.
+ * @param creating Indica si se está creando un nuevo secreto (true) o editando uno existente (false).
+ */
 @Composable
 fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, secret: CardSecret, folderId: String? = null, creating: Boolean = false) {
     var title by remember { mutableStateOf(secret.title) }
@@ -165,9 +175,6 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
             secret.folderId = selectedFolderId
             viewModel.insertSecret(secret)
             navController.popBackStack()
-//        navController.navigate(NavRoutes.Secrets.route) {
-//            popUpTo(NavRoutes.Home.route)
-//        }
         }
         Unit
     }
@@ -177,7 +184,6 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = Modifier.fillMaxWidth().fillMaxHeight()
         modifier = Modifier
     ) {
         OutlinedTextField(
@@ -240,11 +246,11 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
             value = expirationDate,
             onValueChange = { expirationDate = it },
             label = { Text(stringResource(R.string.expiration_date)) },
-            readOnly = true,  // Hacer el campo de solo lectura
+            readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.calendar), // Asegúrate de tener este icono
+                        painter = painterResource(id = R.drawable.calendar),
                         contentDescription = "Seleccionar fecha"
                     )
                 }
@@ -259,20 +265,14 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
                             timeInMillis = it
                         }
                         // Formato para tarjetas: MM/YY
-                        val month = calendar.get(Calendar.MONTH) + 1 // Calendar.MONTH es 0-based
-                        val year = calendar.get(Calendar.YEAR) % 100 // Solo queremos los últimos 2 dígitos
+                        val month = calendar.get(Calendar.MONTH) + 1
+                        val year = calendar.get(Calendar.YEAR) % 100
                         expirationDate = String.format("%02d/%02d", month, year)
                     }
                 },
                 onDismiss = { showDatePicker = false }
             )
         }
-
-//        MonthYearTextField(
-//            label = { Text(stringResource(R.string.expiration_date)) },
-//            value = expirationDate,
-//            onValueChange = { expirationDate = it }
-//        )
 
         if(creating)
             OutlinedTextField(
@@ -307,6 +307,15 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
     }
 }
 
+/**
+ * Composable para editar o crear un secreto de tipo nota.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ * @param viewModel ViewModel que maneja la lógica de negocio y los datos.
+ * @param secret El secreto de tipo NoteSecret a editar o crear.
+ * @param folderId ID de la carpeta en la que se creará el nuevo secreto. Si es "all", no se asigna ninguna carpeta.
+ * @param creating Indica si se está creando un nuevo secreto (true) o editando uno existente (false).
+ */
 @Composable
 fun NoteSecretEditor(navController: NavController, viewModel: SecretViewModel, secret: NoteSecret, folderId: String? = null, creating: Boolean = false) {
     var title by remember { mutableStateOf(secret.title) }
@@ -336,9 +345,6 @@ fun NoteSecretEditor(navController: NavController, viewModel: SecretViewModel, s
             secret.folderId = selectedFolderId
             viewModel.insertSecret(secret)
             navController.popBackStack()
-//        navController.navigate(NavRoutes.Secrets.route) {
-//            popUpTo(NavRoutes.Home.route)
-//        }
         }
         Unit
     }
@@ -348,7 +354,6 @@ fun NoteSecretEditor(navController: NavController, viewModel: SecretViewModel, s
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = Modifier.fillMaxWidth().fillMaxHeight()
         modifier = Modifier
     ) {
         OutlinedTextField(
@@ -408,6 +413,15 @@ fun NoteSecretEditor(navController: NavController, viewModel: SecretViewModel, s
     }
 }
 
+/**
+ * Composable para editar o crear un secreto de tipo credencial.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ * @param viewModel ViewModel que maneja la lógica de negocio y los datos.
+ * @param secret El secreto de tipo CredentialSecret a editar o crear.
+ * @param folderId ID de la carpeta en la que se creará el nuevo secreto. Si es "all", no se asigna ninguna carpeta.
+ * @param creating Indica si se está creando un nuevo secreto (true) o editando uno existente (false).
+ */
 @Composable
 fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewModel, secret: CredentialSecret, folderId: String? = null, creating: Boolean = false) {
     var title by remember { mutableStateOf(secret.title) }
@@ -443,9 +457,6 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
             secret.folderId = selectedFolderId
             viewModel.insertSecret(secret)
             navController.popBackStack()
-//        navController.navigate(NavRoutes.Secrets.route) {
-//            popUpTo(NavRoutes.Home.route)
-//        }
         }
         Unit
     }
@@ -455,7 +466,6 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = Modifier.fillMaxWidth().fillMaxHeight()
         modifier = Modifier
     ) {
         OutlinedTextField(
@@ -528,6 +538,13 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
     }
 }
 
+/**
+ * Composable para el dropdown de selección de carpetas.
+ *
+ * @param viewModel ViewModel que maneja la lógica de negocio y los datos.
+ * @param selectedFolderId ID de la carpeta actualmente seleccionada. Puede ser null para "Sin carpeta".
+ * @param onFolderSelected Callback que se llama cuando se selecciona una carpeta, pasando el ID de la carpeta seleccionada o null para "Sin carpeta".
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FolderDropdown(
@@ -583,6 +600,12 @@ fun FolderDropdown(
     }
 }
 
+/**
+ * Función para intentar desencriptar un texto. Si no se puede, se devuelve el texto original.
+ *
+ * @param input Texto a desencriptar.
+ * @return Texto desencriptado o el original si no se pudo desencriptar.
+ */
 fun displayEncrypted(input: String): String {
     return try {
         if (input.isBlank()) return ""
@@ -592,6 +615,14 @@ fun displayEncrypted(input: String): String {
     }
 }
 
+/**
+ * Composable para un campo de texto que maneja secretos, con opción de mostrar/ocultar y copiar al portapapeles.
+ *
+ * @param secret El texto del secreto a mostrar/editar.
+ * @param onValueChange Callback que se llama cuando el valor del texto cambia.
+ * @param label Etiqueta para el campo de texto.
+ * @param isSingleLine Indica si el campo de texto es de una sola línea o multilinea. Por defecto es true (una sola línea).
+ */
 @Composable
 fun SecretTextField(
     secret: String,
@@ -647,6 +678,12 @@ fun SecretTextField(
     }
 }
 
+/**
+ * Composable para un selector de fecha.
+ *
+ * @param onDateSelected Callback que se llama cuando se selecciona una fecha.
+ * @param onDismiss Callback que se llama cuando se cierra el selector de fecha sin seleccionar una fecha.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModalInput(

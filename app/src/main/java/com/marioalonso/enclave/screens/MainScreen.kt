@@ -1,19 +1,22 @@
 package com.marioalonso.enclave.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.marioalonso.enclave.classes.Folder
-import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.editors.FolderEditor
 import com.marioalonso.enclave.editors.SecretEditor
 import com.marioalonso.enclave.layout.AppScaffold
 import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.viewmodel.SecretViewModel
-import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 
+/**
+ * Punto de entrada de la aplicación, maneja la navegación entre pantallas.
+ *
+ * @param viewModel El ViewModel compartido para manejar el estado y la lógica de negocio.
+ */
 @Composable
 fun MainScreen(viewModel: SecretViewModel) {
 

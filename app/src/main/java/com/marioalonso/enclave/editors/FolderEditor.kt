@@ -11,7 +11,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +25,13 @@ import com.marioalonso.enclave.classes.Folder
 import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
+/**
+ * Composable para crear o editar una carpeta.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ * @param viewModel ViewModel que maneja la lógica de negocio y los datos.
+ * @param folder Carpeta a editar. Si se está creando una nueva carpeta, se pasa una instancia vacía.
+ */
 @Composable
 fun FolderEditor(
     navController: NavController,

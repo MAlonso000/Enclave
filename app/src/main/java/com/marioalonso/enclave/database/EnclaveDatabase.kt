@@ -8,6 +8,10 @@ import com.marioalonso.enclave.classes.Folder
 import com.marioalonso.enclave.dao.EnclaveDao
 import com.marioalonso.enclave.entities.*
 
+/**
+ * Base de datos Room para la aplicación Enclave.
+ *
+ */
 @Database(
     entities = [
         SecretEntity::class,

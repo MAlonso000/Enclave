@@ -23,13 +23,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.utils.AESCipherGCM
 import com.marioalonso.enclave.utils.PasswordUtils
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
+/**
+ * Pantalla para cambiar la contraseña maestra del sistema.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas
+ * @param viewModel ViewModel que maneja los secretos y la lógica de negocio relacionada
+ */
 @Composable
 fun ChangePasswordScreen(
     navController: androidx.navigation.NavController,
@@ -177,6 +182,14 @@ fun changePassword(
     }
 }
 
+/**
+ * Diálogo de alerta para mostrar mensajes relacionados con el cambio de contraseña.
+ *
+ * @param dialogMessageTitle Título del mensaje del diálogo (recurso de cadena)
+ * @param dialogMessageDetail Detalle del mensaje del diálogo (recurso de cadena)
+ * @param showDialog Booleano que indica si el diálogo debe mostrarse
+ * @param onDismiss Función que se llama cuando el diálogo es descartado
+ */
 @Composable
 fun ChangePasswordDialog(
     dialogMessageTitle: Int,

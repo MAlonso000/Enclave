@@ -1,49 +1,49 @@
 package com.marioalonso.enclave.layout
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
-import com.marioalonso.enclave.classes.Folder
-import com.marioalonso.enclave.classes.Secret
-import com.marioalonso.enclave.lists.FolderList
-import com.marioalonso.enclave.lists.SecretList
-import com.marioalonso.enclave.viewmodel.SecretViewModel
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.clickable
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.marioalonso.enclave.R
-import com.marioalonso.enclave.editors.SecretEditor
 import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.screens.FolderListScreen
 import com.marioalonso.enclave.screens.SecretListScreen
 import com.marioalonso.enclave.utils.AESCipherGCM
+import com.marioalonso.enclave.viewmodel.SecretViewModel
 
+/**
+ * Composable para la estructura principal de la aplicación con Scaffold, que incluye
+ * una barra superior, un botón de acción flotante y una barra de navegación inferior.
+ *
+ * @param navController Controlador de navegación para manejar la navegación entre pantallas.
+ * @param viewModel ViewModel para manejar la lógica de negocio y el estado de la aplicación.
+ * @param route Ruta actual para determinar qué pantalla mostrar.
+ * @param folderId ID de la carpeta actual, por defecto es "all".
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppScaffold(
@@ -95,14 +95,6 @@ fun AppScaffold(
             }, colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ), actions = {
-//                Icon(
-//                    imageVector = Icons.Filled.Settings,
-//                    tint = MaterialTheme.colorScheme.onPrimary,
-//                    contentDescription = "Settings",
-//                    modifier = Modifier
-//                        .clickable {}
-//                        .padding(8.dp)
-//                )
                 Icon(
                     painter = painterResource(R.drawable.logout),
                     tint = MaterialTheme.colorScheme.onPrimary,
@@ -124,15 +116,15 @@ fun AppScaffold(
                 ExpandableFab(
                     isExpanded = fabExpanded,
                     onFabToggle = { fabExpanded = !fabExpanded },
-                    onAddType1 = {
+                    onAddCredential = {
                         fabExpanded = false
                         navController.navigate(NavRoutes.SecretEditor.route + "/add_credential" + "/${folderId}")
                     },
-                    onAddType2 = {
+                    onAddNote = {
                         fabExpanded = false
                         navController.navigate(NavRoutes.SecretEditor.route + "/add_note" + "/${folderId}")
                     },
-                    onAddType3 = {
+                    onAddCard = {
                         fabExpanded = false
                         navController.navigate(NavRoutes.SecretEditor.route + "/add_credit_card" + "/${folderId}")
                     }

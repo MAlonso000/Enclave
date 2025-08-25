@@ -1,9 +1,20 @@
 package com.marioalonso.enclave.classes
 
 import com.marioalonso.enclave.utils.AESCipherGCM
-import java.util.*
+import java.util.UUID
 import javax.crypto.SecretKey
 
+/**
+ * Clase que representa una nota secreta.
+ *
+ * @property encryptedNote El contenido cifrado de la nota.
+ * @constructor
+ * Crea una nueva instancia de NoteSecret.
+ *
+ * @param id El ID único de la nota.
+ * @param title El título de la nota.
+ * @param folderId El ID de la carpeta a la que pertenece la nota (opcional).
+ */
 class NoteSecret(
     id: String = UUID.randomUUID().toString(),
     title: String,

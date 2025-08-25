@@ -1,9 +1,25 @@
 package com.marioalonso.enclave.classes
 
 import com.marioalonso.enclave.utils.AESCipherGCM
-import java.util.*
+import java.util.UUID
 import javax.crypto.SecretKey
 
+/**
+ * Clase que representa un secreto de tipo tarjeta.
+ *
+ * @property ownerName Nombre del propietario de la tarjeta.
+ * @property encryptedCardNumber Número de tarjeta cifrado.
+ * @property encryptedPin PIN cifrado de la tarjeta.
+ * @property brand Marca de la tarjeta.
+ * @property expirationDate Fecha de expiración de la tarjeta.
+ * @property encryptedCVV CVV cifrado de la tarjeta.
+ * @constructor
+ * Crea una nueva instancia de CardSecret.
+ *
+ * @param id Identificador único del secreto.
+ * @param title Título del secreto.
+ * @param folderId Identificador de la carpeta a la que pertenece el secreto (opcional).
+ */
 class CardSecret (
     id: String = UUID.randomUUID().toString(),
     title: String,

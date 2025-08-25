@@ -36,56 +36,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.classes.CardSecret
 import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
+import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.utils.AESCipherGCM
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
-//@Composable
-//fun SecretItem(
-//    secret: Secret,
-//    onItemClick : (Secret) -> Unit,
-//    modifier: Modifier = Modifier
-//) {
-//    val context = LocalContext.current
-//    var switchState by remember { mutableStateOf(false) }
-//    val onSwitchChange = { it: Boolean -> switchState = it }
-//
-//    Row(
-//        modifier.fillMaxWidth().padding(all = 20.dp).clickable { onItemClick(secret) },
-//        horizontalArrangement = Arrangement.SpaceBetween,
-//        verticalAlignment = Alignment.Top
-//    ) {
-//        Row{
-//            SwitchICon(
-//                switchState = switchState,
-//                onSwitchChange = onSwitchChange,
-//            )
-//            when (secret) {
-//                is NoteSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
-//                is CardSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
-//                is CredentialSecret -> SecretData(secret = secret, switchState = switchState, modifier = modifier)
-//            }
-//        }
-//        Text("prueba")
-//    }
-//}
-
+/**
+ * Composable para mostrar un elemento de secreto (nota, tarjeta, credencial) en una lista.
+ *
+ * @param secret El secreto a mostrar.
+ * @param onItemClick Función que se llama cuando se hace clic en el elemento.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @Composable
 fun SecretItem(
     secret: Secret,
     onItemClick : (Secret) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     var switchState by remember { mutableStateOf(false) }
     val onSwitchChange = { it: Boolean -> switchState = it }
 
@@ -111,22 +86,39 @@ fun SecretItem(
     }
 }
 
+/**
+ * Función para mostrar "N/A" si el campo está vacío o es nulo
+ *
+ * @param input El campo de texto a evaluar
+ * @return El campo de texto o "N/A" si está vacío o es nulo
+ */
 fun display(input: String): String {
     return if (input == null || input.isBlank()) "N/A" else input
 }
 
+/**
+ * Función para mostrar "N/A" si el campo está vacío o es nulo, desencriptando el valor
+ *
+ * @param input El campo de texto a evaluar
+ * @return El campo de texto desencriptado o "N/A" si está vacío o es nulo
+ */
 fun displayEncrypted(input: String): String {
     return if (input == null || input.isBlank()) "N/A" else AESCipherGCM.decrypt(input)
 }
 
+/**
+ * Composable para mostrar los datos de un secreto de tipo nota.
+ *
+ * @param secret El secreto de tipo nota a mostrar.
+ * @param switchState Estado del switch para mostrar/ocultar información sensible.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @Composable
 fun SecretData(
     secret: NoteSecret,
     switchState: Boolean,
     modifier: Modifier = Modifier
 ) {
-//    val salt = Base64.getDecoder().decode("OnNCziG6nTZeun+nWHtTOw==")
-//    val key = remember { AESCipherGCM.deriveKey("miClaveMaestra123".toCharArray(), salt) }
     Row(
         verticalAlignment = Alignment.Top,
     ) {
@@ -155,15 +147,19 @@ fun SecretData(
     }
 }
 
-
+/**
+ * Composable para mostrar los datos de un secreto de tipo tarjeta.
+ *
+ * @param secret El secreto de tipo tarjeta a mostrar.
+ * @param switchState Estado del switch para mostrar/ocultar información sensible.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @Composable
 fun SecretData(
     secret: CardSecret,
     switchState: Boolean,
     modifier: Modifier = Modifier
 ) {
-//    val salt = Base64.getDecoder().decode("OnNCziG6nTZeun+nWHtTOw==")
-//    val key = remember { AESCipherGCM.deriveKey("miClaveMaestra123".toCharArray(), salt) }
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -198,14 +194,19 @@ fun SecretData(
     }
 }
 
+/**
+ * Composable para mostrar los datos de un secreto de tipo credencial.
+ *
+ * @param secret El secreto de tipo credencial a mostrar.
+ * @param switchState Estado del switch para mostrar/ocultar información sensible.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @Composable
 fun SecretData(
     secret: CredentialSecret,
     switchState: Boolean,
     modifier: Modifier = Modifier
 ) {
-//    val salt = Base64.getDecoder().decode("OnNCziG6nTZeun+nWHtTOw==")
-//    val key = remember { AESCipherGCM.deriveKey("miClaveMaestra123".toCharArray(), salt) }
 
     Row(
         verticalAlignment = Alignment.Top,
@@ -221,7 +222,6 @@ fun SecretData(
         Column(
             verticalArrangement = Arrangement.Top,
         ) {
-//            Text(secret.title, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(
                 text = secret.title,
                 style = MaterialTheme.typography.titleMedium,
@@ -239,6 +239,14 @@ fun SecretData(
     }
 }
 
+/**
+ * Composable que envuelve un SecretItem con funcionalidad de swipe to delete.
+ *
+ * @param viewModel ViewModel para manejar la lógica de negocio.
+ * @param secret El secreto a mostrar.
+ * @param onItemClick Función que se llama cuando se hace clic en el elemento.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeableSecretItem(
@@ -288,11 +296,8 @@ fun SwipeableSecretItem(
     }
     Surface(
         modifier = modifier.padding(5.dp).fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium, // Redondea los bordes
-        color = MaterialTheme.colorScheme.surfaceVariant, // Color de fondo
-//        tonalElevation = 1.dp, // Pequeña elevación para dar efecto de tarjeta
-//        shadowElevation = 4.dp, // Si quieres una sombra más pronunciada
-//         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline) // Si quieres un borde
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         SwipeToDismissBox(
             state = dismissState,
@@ -331,6 +336,11 @@ fun SwipeableSecretItem(
     }
 }
 
+/**
+ * Composable para mostrar el icono correspondiente según el tipo de secreto.
+ *
+ * @param secret El secreto cuyo icono se va a mostrar.
+ */
 @Composable
 fun SecretIcon(secret: Secret){
     when (secret) {
@@ -352,6 +362,12 @@ fun SecretIcon(secret: Secret){
     }
 }
 
+/**
+ * Composable para mostrar un icono de switch (ojo) que permite alternar entre mostrar y ocultar información sensible.
+ *
+ * @param switchState Estado actual del switch (true para mostrar, false para ocultar).
+ * @param onSwitchChange Función que se llama cuando el estado del switch cambia.
+ */
 @Composable
 fun SwitchIcon(switchState: Boolean, onSwitchChange: (Boolean) -> Unit) {
     val drawableResource = if (switchState) R.drawable.eye_on

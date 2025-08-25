@@ -1,12 +1,10 @@
 package com.marioalonso.enclave.screens
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +26,17 @@ import androidx.navigation.NavController
 import com.marioalonso.enclave.R
 import com.marioalonso.enclave.navigation.NavRoutes
 import com.marioalonso.enclave.utils.AESCipherGCM
-import com.marioalonso.enclave.viewmodel.SecretViewModel
 import com.marioalonso.enclave.utils.PasswordUtils
+import com.marioalonso.enclave.viewmodel.SecretViewModel
 
+/**
+ * Pantalla de inicio donde el usuario puede introducir su contraseña maestra
+ * o establecer una nueva si es la primera vez que usa la aplicación.
+ *
+ * @param navController Controlador de navegación para moverse entre pantallas
+ * @param viewModel ViewModel que maneja los secretos
+ * @param context Contexto de la aplicación
+ */
 @Composable
 fun Home(navController: NavController, viewModel: SecretViewModel,context: Context) {
     var password by remember { mutableStateOf("") }
@@ -70,7 +76,6 @@ fun Home(navController: NavController, viewModel: SecretViewModel,context: Conte
         Button(
             onClick = {
                 if(password.isEmpty()) {
-                    Log.e("Home", "Contraseña vacía")
                     dialogMessageTitle = R.string.wrong_password
                     dialogMessageDetail = R.string.empty_password_error_extended
                     showDialog = true
@@ -79,13 +84,11 @@ fun Home(navController: NavController, viewModel: SecretViewModel,context: Conte
                     if (AESCipherGCM.verifyPassword(context, password)) {
                         navController.navigate(NavRoutes.Secrets.route)
                     } else {
-                        Log.e("Home", "Contraseña incorrecta" + password)
                         dialogMessageTitle = R.string.wrong_password
                         dialogMessageDetail = R.string.wrong_password_extended
                         showDialog = true
                     }
                 } else {
-                    // Inicializar una nueva contraseña
                     val (result, error, errorDetail) = PasswordUtils.isPasswordSecure(password)
                     if(!result) {
                         dialogMessageTitle = error
@@ -103,7 +106,6 @@ fun Home(navController: NavController, viewModel: SecretViewModel,context: Conte
         ) {
             Text(text = if (isPasswordSet) stringResource(R.string.access) else stringResource(R.string.start))
         }
-        //Boton para probar cambiar la contraseña
         if(isPasswordSet)
             TextButton(
                 onClick = {
@@ -116,6 +118,15 @@ fun Home(navController: NavController, viewModel: SecretViewModel,context: Conte
     }
 }
 
+/**
+ * Diálogo que muestra un mensaje de error cuando la contraseña introducida es incorrecta
+ * o no cumple con los requisitos de seguridad.
+ *
+ * @param dialogMessageTitle Título del mensaje del diálogo
+ * @param dialogMessageDetail Detalle del mensaje del diálogo
+ * @param showDialog Booleano que indica si el diálogo debe mostrarse
+ * @param onDismiss Función que se llama cuando el diálogo se descarta
+ */
 @Composable
 fun IncorrectPasswordDialog(
     dialogMessageTitle: Int,
@@ -140,47 +151,3 @@ fun IncorrectPasswordDialog(
         )
     }
 }
-
-///**
-// * Cambia la contraseña maestra del sistema y reencripta todos los secretos.
-// *
-// * @param context Contexto de la aplicación
-// * @param currentPassword Contraseña actual
-// * @param newPassword Nueva contraseña a establecer
-// * @param decryptAllSecrets Función que desencripta todos los secretos y los guarda temporalmente
-// * @param encryptAllSecrets Función que reencripta todos los secretos con la nueva clave
-// * @return true si el cambio fue exitoso, false en caso contrario
-// */
-//fun changePassword(
-//    context: Context,
-//    currentPassword: String,
-//    newPassword: String,
-//    viewModel: SecretViewModel
-//): Boolean {
-//    // 1. Verificar que la contraseña actual sea correcta
-//    if (!AESCipherGCM.verifyPassword(context, currentPassword)) {
-//        return false
-//    }
-//
-//    try {
-//        // 2. Desencriptar todos los secretos con la clave actual
-//        viewModel.decryptAllSecrets()
-//
-//        // 3. Hacer logout para limpiar el estado actual
-//        AESCipherGCM.logout(context)
-//
-//        // 4. Inicializar con la nueva contraseña
-//        AESCipherGCM.initializeKey(context, newPassword)
-//        AESCipherGCM.initializeVerificationText(context)
-//
-//        // 5. Reencriptar todos los secretos con la nueva clave
-//        viewModel.encryptAllSecrets()
-//
-//        // 6. Hacer logout nuevamente
-//        AESCipherGCM.logout(context)
-//
-//        return true
-//    } catch (e: Exception) {
-//        return false
-//    }
-//}

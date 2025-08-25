@@ -2,6 +2,9 @@ package com.marioalonso.enclave.utils
 
 import java.security.SecureRandom
 
+/**
+ * Generador de contraseñas seguras con opciones personalizables.
+ */
 object PasswordGenerator {
 
     private const val UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -12,6 +15,18 @@ object PasswordGenerator {
 
     private val secureRandom = SecureRandom()
 
+    /**
+     * Genera una contraseña segura.
+     *
+     * @param length Longitud de la contraseña (mínimo 6).
+     * @param useUpper Incluir letras mayúsculas.
+     * @param useLower Incluir letras minúsculas.
+     * @param useDigits Incluir dígitos.
+     * @param useSymbols Incluir símbolos especiales.
+     * @param avoidAmbiguous Evitar caracteres ambiguos como 'O', '0', 'l', '1', 'I'.
+     * @return Contraseña generada.
+     * @throws IllegalArgumentException Si la longitud es menor a 6 o si no se selecciona ningún tipo de carácter.
+     */
     fun generate(
         length: Int = 16,
         useUpper: Boolean = true,
@@ -39,17 +54,4 @@ object PasswordGenerator {
             .map { pool[secureRandom.nextInt(pool.length)] }
             .joinToString("")
     }
-}
-
-fun main() {
-    val contraseñaSegura = PasswordGenerator.generate(
-        length = 20,
-        useUpper = true,
-        useLower = true,
-        useDigits = true,
-        useSymbols = true,
-        avoidAmbiguous = true // Evitar caracteres ambiguos
-    )
-
-    println("Tu nueva contraseña segura: $contraseñaSegura")
 }

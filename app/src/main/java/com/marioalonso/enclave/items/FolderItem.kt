@@ -43,6 +43,14 @@ import com.marioalonso.enclave.classes.Folder
 import com.marioalonso.enclave.classes.Secret
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 
+/**
+ * Composable para mostrar un elemento de carpeta con su nombre y el número de secretos que contiene.
+ *
+ * @param folder La carpeta a mostrar.
+ * @param secrets Lista de secretos para contar cuántos están en la carpeta.
+ * @param onFolderClick Función que se llama cuando se hace click en la carpeta.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @Composable
 fun FolderItem(
     folder: Folder,
@@ -79,7 +87,7 @@ fun FolderItem(
 
         Column() {
             Text(
-                text = "${numberOfSecretsInFolder} ${stringResource(R.string.secrets_lowercase)}",
+                text = "$numberOfSecretsInFolder ${stringResource(R.string.secrets_lowercase)}",
                 modifier = Modifier,
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.secondary
@@ -88,6 +96,15 @@ fun FolderItem(
     }
 }
 
+/**
+ * Composable que envuelve un FolderItem en una caja deslizable para permitir la eliminación mediante un gesto de deslizamiento.
+ *
+ * @param viewModel ViewModel para manejar la lógica de eliminación de carpetas.
+ * @param folder La carpeta a mostrar.
+ * @param secrets Lista de secretos para contar cuántos están en la carpeta.
+ * @param onItemClick Función que se llama cuando se hace click en la carpeta.
+ * @param modifier Modificador opcional para personalizar el diseño.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeableDeckItem(
@@ -138,11 +155,8 @@ fun SwipeableDeckItem(
     }
     Surface(
         modifier = modifier.padding(5.dp).fillMaxWidth(),
-        shape = MaterialTheme.shapes.medium, // Redondea los bordes
-        color = MaterialTheme.colorScheme.surfaceVariant, // Color de fondo
-//        tonalElevation = 1.dp, // Pequeña elevación para dar efecto de tarjeta
-//        shadowElevation = 4.dp, // Si quieres una sombra más pronunciada
-//         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline) // Si quieres un borde
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
     ) {
         SwipeToDismissBox(
             state = dismissState,

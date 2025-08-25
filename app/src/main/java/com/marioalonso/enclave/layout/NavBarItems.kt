@@ -1,10 +1,10 @@
 package com.marioalonso.enclave.layout
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.ui.res.stringResource
 import com.marioalonso.enclave.R
 
+/**
+ * Objeto que contiene los elementos de la barra de navegación.
+ */
 object NavBarItems {
     val BarItems = listOf(
         BarItem(
