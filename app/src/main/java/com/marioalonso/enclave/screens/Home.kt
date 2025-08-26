@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.marioalonso.enclave.R
@@ -71,7 +72,7 @@ fun Home(navController: NavController, viewModel: SecretViewModel,context: Conte
             label = { Text(stringResource(R.string.password)) },
             modifier = Modifier.padding(vertical = 8.dp),
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if(isPasswordSet) PasswordVisualTransformation() else VisualTransformation.None,
         )
         Button(
             onClick = {
