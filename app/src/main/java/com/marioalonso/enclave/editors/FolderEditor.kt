@@ -63,7 +63,8 @@ fun FolderEditor(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-            }
+            },
+            singleLine = true
         )
         Row(
             modifier = Modifier.padding(10.dp),

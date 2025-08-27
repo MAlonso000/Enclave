@@ -57,4 +57,5 @@
     <string name="back">Back</string>
     <string name="no_folders">No folders yet. Tap the + icon to add one</string>
     <string name="no_secrets">No secrets yet. Tap the + icon to add one</string>
+    <string name="invalid_email">Wrong email format</string>
 </resources>

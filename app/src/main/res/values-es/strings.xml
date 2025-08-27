@@ -53,4 +53,5 @@
     <string name="back">Volver</string>
     <string name="no_folders">No hay carpetas. Toca el símbolo + para añadir una</string>
     <string name="no_secrets">No hay secretos. Toca el símbolo + para añadir uno</string>
+    <string name="invalid_email">Formato de email no válido</string>
 </resources>

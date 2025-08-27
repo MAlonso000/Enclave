@@ -177,6 +177,7 @@ fun SwipeableDeckItem(
                     Modifier
                         .fillMaxSize()
                         .background(color)
+                        .padding(8.dp)
                 ) {
                     Icon(
                         modifier = Modifier

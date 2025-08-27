@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -37,6 +38,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +50,7 @@ import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.utils.AESCipherGCM
 import com.marioalonso.enclave.viewmodel.SecretViewModel
+import java.util.regex.Pattern
 
 /**
  * Composable para editar o crear un secreto (credencial, nota o tarjeta).
@@ -192,16 +195,15 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
             label = { Text(stringResource(R.string.title)) },
             isError = titleError.isNotEmpty(),
             supportingText = {
-                if (titleError.isNotEmpty()) {
-                    Text(
-                        text = titleError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
+                Text(
+                    text = titleError,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            singleLine = true
         )
         FolderDropdown(
             viewModel = viewModel,
@@ -211,36 +213,45 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
         OutlinedTextField(
             value = ownerName,
             onValueChange = { ownerName = it },
-            label = { Text(stringResource(R.string.owner)) }
+            label = { Text(stringResource(R.string.owner)) },
+            singleLine = true
         )
         if(creating) {
             OutlinedTextField(
                 value = encryptedCardNumber,
                 onValueChange = { encryptedCardNumber = it },
-                label = { Text(stringResource(R.string.card_number)) }
+                label = { Text(stringResource(R.string.card_number)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true
             )
             OutlinedTextField(
                 value = encryptedPin,
                 onValueChange = { encryptedPin = it },
-                label = { Text(stringResource(R.string.pin)) }
+                label = { Text(stringResource(R.string.pin)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true
             )
         }
         else {
             SecretTextField(
                 secret = encryptedCardNumber,
                 onValueChange = { encryptedCardNumber = it },
-                label = stringResource(R.string.card_number)
+                label = stringResource(R.string.card_number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             SecretTextField(
                 secret = encryptedPin,
                 onValueChange = { encryptedPin = it },
-                label = stringResource(R.string.pin)
+                label = stringResource(R.string.pin),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
             )
         }
         OutlinedTextField(
             value = brand,
             onValueChange = { brand = it },
-            label = { Text(stringResource(R.string.brand)) }
+            label = { Text(stringResource(R.string.brand)) },
+            singleLine = true
         )
         OutlinedTextField(
             value = expirationDate,
@@ -278,13 +289,16 @@ fun CardSecretEditor(navController: NavController, viewModel: SecretViewModel, s
             OutlinedTextField(
                 value = encryptedCVV,
                 onValueChange = { encryptedCVV = it },
-                label = { Text(stringResource(R.string.cvv)) }
+                label = { Text(stringResource(R.string.cvv)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                singleLine = true
             )
         else
             SecretTextField(
                 secret = encryptedCVV,
                 onValueChange = { encryptedCVV = it },
-                label = stringResource(R.string.cvv)
+                label = stringResource(R.string.cvv),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         Row(
             modifier = Modifier.padding(10.dp),
@@ -362,23 +376,22 @@ fun NoteSecretEditor(navController: NavController, viewModel: SecretViewModel, s
             label = { Text(stringResource(R.string.title)) },
             isError = titleError.isNotEmpty(),
             supportingText = {
-                if (titleError.isNotEmpty()) {
-                    Text(
-                        text = titleError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
+                Text(
+                    text = titleError,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            singleLine = true
         )
         FolderDropdown(
             viewModel = viewModel,
             selectedFolderId = selectedFolderId,
             onFolderSelected = { selectedFolderId = it }
         )
-        if(creating == true)
+        if(creating)
             OutlinedTextField(
                 value = note,
                 onValueChange = { note = it },
@@ -432,8 +445,10 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
     var selectedFolderId by remember { mutableStateOf(secret.folderId) }
 
     var titleError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
 
     val requiredFieldText = stringResource(R.string.required_field)
+    val invalidEmailText = stringResource(R.string.invalid_email)
 
     fun validateInputs(): Boolean {
         var isValid = true
@@ -443,6 +458,13 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
             isValid = false
         } else {
             titleError = ""
+        }
+
+        if(!isEmailValid(email) || email.isBlank()) {
+            emailError = invalidEmailText
+            isValid = false
+        } else {
+            emailError = ""
         }
         return isValid
     }
@@ -474,16 +496,15 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
             label = { Text(stringResource(R.string.title)) },
             isError = titleError.isNotEmpty(),
             supportingText = {
-                if (titleError.isNotEmpty()) {
-                    Text(
-                        text = titleError,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
+                Text(
+                    text = titleError,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            singleLine = true
         )
         FolderDropdown(
             viewModel = viewModel,
@@ -493,13 +514,15 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text(stringResource(R.string.username)) }
+            label = { Text(stringResource(R.string.username)) },
+            singleLine = true
         )
-        if(creating == true)
+        if(creating)
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(stringResource(R.string.password)) }
+                label = { Text(stringResource(R.string.password)) },
+                singleLine = true
             )
         else
             SecretTextField(
@@ -510,12 +533,25 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
         OutlinedTextField(
             value = url,
             onValueChange = { url = it },
-            label = { Text(stringResource(R.string.url)) }
+            label = { Text(stringResource(R.string.url)) },
+            singleLine = true
         )
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text(stringResource(R.string.email)) }
+            label = { Text(stringResource(R.string.email)) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            isError = emailError.isNotEmpty(),
+            supportingText = {
+                Text(
+                    text = emailError,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            singleLine = true
         )
         Row(
             modifier = Modifier.padding(10.dp),
@@ -601,6 +637,26 @@ fun FolderDropdown(
 }
 
 /**
+ * Valida si una cadena de texto tiene un formato de email válido.
+ *
+ * @param email El email a validar.
+ * @return `true` si el email es válido, `false` en caso contrario.
+ */
+fun isEmailValid(email: String): Boolean {
+    if (email.isBlank()) return true
+    val emailRegex = Pattern.compile(
+        "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                "\\@" +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                "(" +
+                "\\." +
+                "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                ")+"
+    )
+    return emailRegex.matcher(email).matches()
+}
+
+/**
  * Función para intentar desencriptar un texto. Si no se puede, se devuelve el texto original.
  *
  * @param input Texto a desencriptar.
@@ -628,7 +684,8 @@ fun SecretTextField(
     secret: String,
     onValueChange: (String) -> Unit,
     label: String,
-    isSingleLine : Boolean = true
+    isSingleLine : Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     var isVisible by remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
@@ -673,7 +730,8 @@ fun SecretTextField(
                         )
                     }
                 }
-            }
+            },
+            keyboardOptions = keyboardOptions
         )
     }
 }
