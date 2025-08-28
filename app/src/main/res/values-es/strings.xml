@@ -54,4 +54,9 @@
     <string name="no_folders">No hay carpetas. Toca el símbolo + para añadir una</string>
     <string name="no_secrets">No hay secretos. Toca el símbolo + para añadir uno</string>
     <string name="invalid_email">Formato de email no válido</string>
+    <string name="password_strength_very_weak">Muy débil</string>
+    <string name="password_strength_weak">Débil</string>
+    <string name="password_strength_moderate">Moderada</string>
+    <string name="password_strength_strong">Fuerte</string>
+    <string name="password_strength_very_strong">Muy fuerte</string>
 </resources>

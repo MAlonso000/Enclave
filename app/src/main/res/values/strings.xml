@@ -58,4 +58,9 @@
     <string name="no_folders">No folders yet. Tap the + icon to add one</string>
     <string name="no_secrets">No secrets yet. Tap the + icon to add one</string>
     <string name="invalid_email">Wrong email format</string>
+    <string name="password_strength_very_weak">Very weak</string>
+    <string name="password_strength_weak">Weak</string>
+    <string name="password_strength_moderate">Moderate</string>
+    <string name="password_strength_strong">Strong</string>
+    <string name="password_strength_very_strong">Very strong</string>
 </resources>

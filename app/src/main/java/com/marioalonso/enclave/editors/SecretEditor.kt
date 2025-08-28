@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -49,6 +50,7 @@ import com.marioalonso.enclave.classes.CardSecret
 import com.marioalonso.enclave.classes.CredentialSecret
 import com.marioalonso.enclave.classes.NoteSecret
 import com.marioalonso.enclave.utils.AESCipherGCM
+import com.marioalonso.enclave.utils.PasswordUtils
 import com.marioalonso.enclave.viewmodel.SecretViewModel
 import java.util.regex.Pattern
 
@@ -450,6 +452,8 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
     val requiredFieldText = stringResource(R.string.required_field)
     val invalidEmailText = stringResource(R.string.invalid_email)
 
+    val strength = PasswordUtils.calculatePasswordStrength(password)
+
     fun validateInputs(): Boolean {
         var isValid = true
 
@@ -460,7 +464,7 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
             titleError = ""
         }
 
-        if(!isEmailValid(email) || email.isBlank()) {
+        if(!isEmailValid(email)) {
             emailError = invalidEmailText
             isValid = false
         } else {
@@ -517,18 +521,43 @@ fun CredentialSecretEditor(navController: NavController, viewModel: SecretViewMo
             label = { Text(stringResource(R.string.username)) },
             singleLine = true
         )
-        if(creating)
+
+        val (strengthTextRes, strengthColor) = when (strength) {
+            1 -> R.string.password_strength_very_weak to Color.Red
+            2 -> R.string.password_strength_weak to Color(0xFFFFA500) // Naranja
+            3 -> R.string.password_strength_moderate to Color.Yellow
+            4 -> R.string.password_strength_strong to Color.Green
+            else -> R.string.password_strength_very_strong to Color.Blue
+        }
+
+        if (creating)
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text(stringResource(R.string.password)) },
-                singleLine = true
+                singleLine = true,
+                supportingText = {
+                    if (password.isNotBlank()) {
+                        Text(
+                            text = stringResource(id = strengthTextRes),
+                            color = strengthColor
+                        )
+                    }
+                }
             )
         else
             SecretTextField(
                 secret = password,
                 onValueChange = { password = it },
-                label = stringResource(R.string.password)
+                label = stringResource(R.string.password),
+                supportingText = {
+                    if (password.isNotBlank()) {
+                        Text(
+                            text = stringResource(id = strengthTextRes),
+                            color = strengthColor
+                        )
+                    }
+                }
             )
         OutlinedTextField(
             value = url,
@@ -685,7 +714,8 @@ fun SecretTextField(
     onValueChange: (String) -> Unit,
     label: String,
     isSingleLine : Boolean = true,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    supportingText: @Composable (() -> Unit)? = null
 ) {
     var isVisible by remember { mutableStateOf(false) }
     val clipboardManager = LocalClipboardManager.current
@@ -731,7 +761,8 @@ fun SecretTextField(
                     }
                 }
             },
-            keyboardOptions = keyboardOptions
+            keyboardOptions = keyboardOptions,
+            supportingText = supportingText,
         )
     }
 }
