@@ -59,4 +59,5 @@
     <string name="password_strength_moderate">Moderada</string>
     <string name="password_strength_strong">Fuerte</string>
     <string name="password_strength_very_strong">Muy fuerte</string>
+    <string name="no_folder">Sin carpeta</string>
 </resources>

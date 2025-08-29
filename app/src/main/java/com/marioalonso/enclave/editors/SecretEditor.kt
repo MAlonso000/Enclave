@@ -619,15 +619,13 @@ fun FolderDropdown(
 ) {
     val folders = viewModel.folders.observeAsState(emptyList()).value
 
-    // Añadir opción "Sin carpeta"
-    val folderOptions = listOf(Pair("Sin carpeta", null)) +
+    val folderOptions = listOf(Pair(stringResource(R.string.no_folder), null)) +
             folders.map { Pair(it.name, it.id) }
 
-    // Obtener el nombre de la carpeta seleccionada
     val selectedFolderName = if (selectedFolderId == null) {
-        "Sin carpeta"
+        stringResource(R.string.no_folder)
     } else {
-        folders.find { it.id == selectedFolderId }?.name ?: "Sin carpeta"
+        folders.find { it.id == selectedFolderId }?.name ?: stringResource(R.string.no_folder)
     }
 
     var expanded by remember { mutableStateOf(false) }
@@ -641,7 +639,7 @@ fun FolderDropdown(
             value = selectedFolderName,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Carpeta") },
+            label = { Text((stringResource(R.string.folder) + ":")) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
             modifier = Modifier

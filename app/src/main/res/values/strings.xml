@@ -63,4 +63,5 @@
     <string name="password_strength_moderate">Moderate</string>
     <string name="password_strength_strong">Strong</string>
     <string name="password_strength_very_strong">Very strong</string>
+    <string name="no_folder">No folder</string>
 </resources>
