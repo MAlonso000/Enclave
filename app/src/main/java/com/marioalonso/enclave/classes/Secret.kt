@@ -1,7 +1,6 @@
 package com.marioalonso.enclave.classes
 
 import java.util.UUID
-import javax.crypto.SecretKey
 
 /**
  * Clase abstracta que representa un secreto genérico.
@@ -15,6 +14,4 @@ abstract class Secret(
     var title: String,
     var folderId: String? = null
 ) {
-    abstract fun getContent(password: SecretKey): String
-    abstract fun getContentRaw(): String
 }

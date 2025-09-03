@@ -1,8 +1,6 @@
 package com.marioalonso.enclave.classes
 
-import com.marioalonso.enclave.utils.AESCipherGCM
 import java.util.UUID
-import javax.crypto.SecretKey
 
 /**
  * Clase que representa un secreto de tipo credencial.
@@ -27,15 +25,6 @@ class CredentialSecret(
     var email: String,
     var url: String
 ) : Secret(id, title, folderId) {
-
-    override fun getContentRaw(): String {
-        return "User: $username, Pass: $encryptedPassword"
-    }
-
-    override fun getContent(password: SecretKey): String {
-        val decryptedPassword = AESCipherGCM.decrypt(encryptedPassword)
-        return "User: $username, Pass: $decryptedPassword"
-    }
 
     override fun toString(): String {
         return "Credencial | $title | $username | $encryptedPassword"

@@ -42,8 +42,10 @@ object AESCipherGCM {
      * @param password Contraseña del usuario
      */
     fun initializeKey(context: Context, password: String) {
+        // Si el salt ya existe, usarla; si no, generar una nueva y guardarla
         val existingSalt = getSalt(context)
         val salt = existingSalt ?: generateSalt().also { saveSalt(context, it) }
+        // Derivar la clave y guardarla en memoria
         val key = deriveKey(password, salt)
         cryptoKey = key
         isAuthenticated = true
@@ -220,12 +222,12 @@ object AESCipherGCM {
     fun deriveKey(password: String, salt: ByteArray): SecretKey {
         val passwordCharArray = password.toCharArray()
         try {
+            // Derivar la clave usando PBKDF2 con HMAC-SHA256
             val factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
             val spec = PBEKeySpec(passwordCharArray, salt, ITERATIONS, KEY_SIZE)
             val secret = factory.generateSecret(spec)
             return SecretKeySpec(secret.encoded, "AES")
         } finally {
-            // Clear the password from memory
             passwordCharArray.fill('\u0000')
         }
     }
@@ -235,29 +237,26 @@ object AESCipherGCM {
      * Si se especifica, utiliza una sal para derivar la clave.
      *
      * @param plaintext Texto plano a cifrar
-     * @param useSalt Indica si se debe usar una sal para derivar la clave
      * @return Texto cifrado en Base64
      */
-    fun encrypt(plaintext: String, useSalt: Boolean = false): String {
+    fun encrypt(plaintext: String): String {
+        // Asegurarse de que la clave esté inicializada
         val currentCryptoKey = cryptoKey ?: throw IllegalStateException("Clave de cifrado no inicializada")
 
-        val salt = if (useSalt) generateSalt() else ByteArray(0)
-        val key = if (useSalt) {
-            val masterKeyChars = currentCryptoKey.encoded.toString(Charsets.UTF_8)
-            deriveKey(masterKeyChars, salt)
-        } else {
-            currentCryptoKey
-        }
+        val key = currentCryptoKey
 
+        // Generar un IV aleatorio
         val iv = ByteArray(IV_SIZE).apply {
             SecureRandom().nextBytes(this)
         }
 
+        // Cifrar el texto
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(TAG_SIZE, iv))
         val encrypted = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
 
-        val combined = salt + iv + encrypted
+        // Combinar IV y texto cifrado
+        val combined = iv + encrypted
         return Base64.getEncoder().encodeToString(combined)
     }
 
@@ -266,26 +265,23 @@ object AESCipherGCM {
      * Si se especifica, utiliza una sal para derivar la clave.
      *
      * @param ciphertextBase64 Texto cifrado en Base64
-     * @param useSalt Indica si se debe usar una sal para derivar la clave
      * @param verifyingKey Clave secreta para verificar (opcional)
      * @return Texto plano descifrado
      */
-    fun decrypt(ciphertextBase64: String, useSalt: Boolean = false, verifyingKey: SecretKey? = null): String {
+    fun decrypt(ciphertextBase64: String, verifyingKey: SecretKey? = null): String {
+        // Asegurarse de que la clave esté inicializada
         val cryptoKey = verifyingKey ?: getCryptoKey() ?:
             throw IllegalStateException("Clave de cifrado no inicializada")
 
         val combined = Base64.getDecoder().decode(ciphertextBase64)
-        val salt = if (useSalt) combined.copyOfRange(0, SALT_SIZE) else ByteArray(0)
-        val iv = combined.copyOfRange(if (useSalt) SALT_SIZE else 0, (if (useSalt) SALT_SIZE else 0) + IV_SIZE)
-        val encrypted = combined.copyOfRange((if (useSalt) SALT_SIZE else 0) + IV_SIZE, combined.size)
 
-        val key = if (useSalt) {
-            val masterKeyChars = cryptoKey.encoded.toString(Charsets.UTF_8)
-            deriveKey(masterKeyChars, salt)
-        } else {
-            cryptoKey
-        }
+        // Extraer IV y texto cifrado
+        val iv = combined.copyOfRange(0, IV_SIZE)
+        val encrypted = combined.copyOfRange(IV_SIZE, combined.size)
 
+        val key = cryptoKey
+
+        // Descifrar el texto
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(TAG_SIZE, iv))
         val decrypted = cipher.doFinal(encrypted)

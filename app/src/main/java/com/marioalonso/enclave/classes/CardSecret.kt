@@ -1,8 +1,6 @@
 package com.marioalonso.enclave.classes
 
-import com.marioalonso.enclave.utils.AESCipherGCM
 import java.util.UUID
-import javax.crypto.SecretKey
 
 /**
  * Clase que representa un secreto de tipo tarjeta.
@@ -31,15 +29,6 @@ class CardSecret (
     var expirationDate: String,
     var encryptedCVV: String,
 ): Secret(id, title, folderId) {
-    override fun getContentRaw(): String {
-        return "Owner: $ownerName, Card Number: $encryptedCardNumber, PIN: $encryptedPin, Brand: $brand, Expiration Date: $expirationDate, CVV: $encryptedCVV"
-    }
-
-    override fun getContent(password: SecretKey): String {
-        val decryptedCardNumber = AESCipherGCM.decrypt(encryptedCardNumber)
-        val decryptedCVV = AESCipherGCM.decrypt(encryptedCVV)
-        return "Owner: $ownerName, Card Number: $decryptedCardNumber, PIN: $encryptedPin, Brand: $brand, Expiration Date: $expirationDate, CVV: $decryptedCVV"
-    }
 
     override fun toString(): String {
         return "Tarjeta | $title | $ownerName | $encryptedCardNumber | $encryptedPin | $brand | $expirationDate | $encryptedCVV"
